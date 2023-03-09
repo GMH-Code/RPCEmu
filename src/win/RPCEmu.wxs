@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2003/01/wi'>
+  <Product Name='RPCEmu' Id='????????-????-????-????-????????????'
+    Language='1033' Codepage='1252' Version='0.8.15' Manufacturer='Various'
+    UpgradeCode='6F6DCB0A-0F3C-4D42-B746-47D14825163E'>
+
+    <Package Id='????????-????-????-????-????????????' Keywords='Installer'
+      Description="RPCEmu 0.8.15 Installer"
+      Comments='RPCEmu is an open source project' Manufacturer='Various'
+      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Upgrade Id='6F6DCB0A-0F3C-4D42-B746-47D14825163E'><!-- Id is upgrade code -->
+      <UpgradeVersion OnlyDetect='no' Property='PROJECT_UPGRADE'
+        Maximum='0.8.15' IncludeMaximum='no' RemoveFeatures='all'/>
+      <UpgradeVersion OnlyDetect='yes' Property='PROJECT_DOWNGRADE'
+        Minimum='0.8.15' IncludeMinimum='no'/>
+    </Upgrade>
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt="CD-ROM #1" />
+    <Property Id='DiskPrompt' Value="RPCEmu 0.8.15 Installation [1]" />
+
+
+    <CustomAction Id='NoDownGrade' Error='A later version of RPCEmu is already installed.' />
+
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='RPCEMUPRODUCTDIR' Name='RPCEmu'>
+
+          <Component Id='MainExecutable' Guid='629C3CDA-A189-49B6-B191-00EE03DB810F'>
+
+            <!-- Remove the old 0.8.0 shortcut names on upgrade -->
+            <RemoveFile Id="RemoveDesktopShortcut" On="both" Name="shortc_1"
+              LongName="RPCEmu*" Directory="ProgramMenuDir"/>
+
+            <File Id='RPCEmuEXE' Name='rpcemu.exe' LongName='RPCEmu-Interpreter.exe' DiskId='1'
+              Source='..\RPCEmu-Interpreter.exe' Vital='yes'>
+              <Shortcut Id="startmenurpcemu" Directory="ProgramMenuDir" Name="RPCEmu" 
+                LongName="RPCEmu Interpreter" WorkingDirectory='RPCEMUPRODUCTDIR' Icon="rpcemu.exe" IconIndex="0" />
+            </File>
+            <File Id='RPCEmuEXEd' Name='rpcemud.exe' LongName='RPCEmu-Recompiler.exe' DiskId='1'
+              Source='..\RPCEmu-Recompiler.exe' Vital='yes'>
+              <Shortcut Id="startmenurpcemud" Directory="ProgramMenuDir" Name="RPCEmu-d" 
+                LongName="RPCEmu Recompiler" WorkingDirectory='RPCEMUPRODUCTDIR' Icon="rpcemud.exe" IconIndex="0" />
+            </File>
+            <File Id='cmosram' Name='cmos.ram' DiskId='1' Source='..\cmos.ram' Vital='yes' />
+            <File Id='rpccfg' Name='rpc.cfg' DiskId='1' Source='..\rpc.cfg' Vital='yes' />
+            <File Id='copying' Name='COPYING' DiskId='1' Source='COPYING' Vital='yes' />
+            <File Id='readme' Name='readme.txt' DiskId='1' Source='..\readme.txt' Vital='yes'>
+              <Shortcut Id="readme" Directory="ProgramMenuDir" Name="Readme"
+                LongName="Readme" WorkingDirectory='RPCEMUPRODUCTDIR' IconIndex="0" />
+            </File>
+            <File Id='allegro' Name='alleg.dll' LongName='allegro-4.4.2-mt.dll' DiskId='1' Source='C:\MinGW\bin\allegro-4.4.2-mt.dll' Vital='yes' />
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <Shortcut Id="startmenudir" Directory="ProgramMenuDir" Name="rpcemudi" 
+              LongName="Shortcut to RPCEmu Directory" WorkingDirectory='RPCEMUPRODUCTDIR' />
+
+          </Component>
+
+          <Directory Id='roms' Name='roms'>
+            <Component Id='RomsDirectory' Guid='B3BB53E6-7F2B-47C9-AFE1-6971908F601D'>
+              <CreateFolder Directory="roms" />
+            </Component>
+          </Directory>
+
+          <Directory Id='poduleroms' Name='podulero' LongName="poduleroms">
+            <Component Id='PoduleromsDirectory' Guid='8BF55C3B-E68D-4A64-A5BF-278D0E848DEF'>
+              <File Id='hostfs' Name='hostfs' LongName='hostfs,ffa' DiskId='1' Source='..\riscos-progs\HostFS\hostfs,ffa' Vital='yes' />
+              <File Id='hostfsfiler' Name='hostfsfi' LongName='hostfsfiler,ffa' DiskId='1' Source='..\riscos-progs\HostFS\hostfsfiler,ffa' Vital='yes' />
+              <File Id='syncclock' Name='synccloc' LongName='SyncClock,ffa' DiskId='1' Source='..\riscos-progs\SyncClock\SyncClock,ffa' Vital='yes' />
+            </Component>
+          </Directory>
+
+          <Directory Id='podules' Name='podules'>
+            <Component Id='PodulesDirectory' Guid='486E7436-F85D-4C39-8358-9F6A88234C94'>
+              <CreateFolder Directory="podules" />
+            </Component>
+          </Directory>
+
+          <Directory Id='hostfs' Name='hostfs'>
+            <Component Id='HostfsDirectory' Guid='8E58FAB7-781D-4439-B33E-144F84E2F697'>
+              <CreateFolder Directory="hostfs">
+                <Shortcut Id="startmenuhostfs" Directory="ProgramMenuDir" Name="hostfs" 
+                  LongName="Shortcut to HostFS" WorkingDirectory='RPCEMUPRODUCTDIR' />
+              </CreateFolder>
+            </Component>
+            <Directory Id='network' Name='Network'>
+              <Component Id='networkReadme' Guid='a4a37610-220d-4104-b376-2a911cca961d'>
+                <File Id='tert' Name='ReadMe' LongName='ReadMe,fff' DiskId='1' Source='..\riscos-progs\EtherRPCEm\ReadMe,fff' Vital='yes' />
+              </Component>
+              <Directory Id='PlingSystem' Name='!System'>
+                <Directory Id='ThreeTen310' Name='310'>
+                  <Directory Id='Modules' Name='Modules'>
+                    <Directory Id='Network' Name='Network'>
+                      <Component Id='networkDriver' Guid='bcdee338-e6b3-402b-8fc4-4f9b2c9618c0'>
+                        <File Id='networkDriverFile' Name='EtherRPC' LongName='EtherRPCEm,ffa' DiskId='1' Source='..\riscos-progs\EtherRPCEm\!System\310\Modules\Network\EtherRPCEm,ffa' Vital='yes' />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                </Directory>
+              </Directory>
+              <Directory Id='AutoSense' Name='AutoSens' LongName='AutoSense'>
+                <Component Id='networkAutoSense' Guid='eec5d325-3f83-4f46-8d8a-b6502a87d7c0'>
+                  <File Id='networkAutoSenseFile' Name='EtherRPC' LongName='EtherRPCEm,ffb' DiskId='1' Source='..\riscos-progs\EtherRPCEm\!Boot\Resources\Configure\!InetSetup\AutoSense\EtherRPCEm,ffb' Vital='yes' />
+                </Component>
+              </Directory>
+            </Directory>
+          </Directory>
+
+<!--
+          <Component Id='HelperLibrary' Guid='1BC0F2F1-7ECA-40BF-8D78-4CE6369F709C'>
+            <File Id='HelperDLL' Name='Helper.dll' DiskId='1' Source='Helper.dll' Vital='yes' />
+          </Component>
+-->
+
+<!--
+          <Component Id='Manual' Guid='64D6A0E4-CB25-41E9-904C-D18B681F8168'>
+            <File Id='Manual' Name='Manual.pdf' DiskId='1' Source='Manual.pdf'>
+              <Shortcut Id="startmenuManual" Directory="ProgramMenuDir" Name="Manual" LongName="Instruction Manual" />
+            </File>
+          </Component>
+-->
+
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="PMenu" LongName="Programs">
+        <Directory Id="ProgramMenuDir" Name='RPCEmu' />
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='RomsDirectory' />
+      <ComponentRef Id='PoduleromsDirectory' />
+      <ComponentRef Id='PodulesDirectory' />
+      <ComponentRef Id='HostfsDirectory' />
+      <ComponentRef Id='networkReadme' />
+      <ComponentRef Id='networkDriver' />
+      <ComponentRef Id='networkAutoSense' />
+<!--
+      <ComponentRef Id='HelperLibrary' />
+      <ComponentRef Id='Manual' />
+-->
+    </Feature>
+
+    <InstallExecuteSequence>
+      <LaunchConditions After='AppSearch'></LaunchConditions>
+
+      <Custom Action='NoDownGrade' After='FindRelatedProducts'>
+      <![CDATA[PROJECT_DOWNGRADE]]></Custom>
+
+      <RemoveExistingProducts After='InstallFinalize'/>
+
+    </InstallExecuteSequence>
+
+
+    <Property Id="WIXUI_INSTALLDIR" Value="RPCEMUPRODUCTDIR" />
+
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Icon Id="rpcemu.exe" SourceFile="..\RPCEmu-Interpreter.exe" />
+    <Icon Id="rpcemud.exe" SourceFile="..\RPCEmu-Recompiler.exe" />
+
+  </Product>
+</Wix>

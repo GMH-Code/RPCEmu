@@ -1,0 +1,9 @@
+
+This directory used to contain files for setting up networking on RPCEmu, but
+these are no longer needed as of version 0.9.1.
+
+Please refer to the guide at
+
+http://www.marutan.net/rpcemu/manual/network.html
+
+for full instructions on how to configure networking.
