@@ -76,13 +76,15 @@ MainDisplay::mouseMoveEvent(QMouseEvent *event)
 		QCursor::setPos(this->mapToGlobal(middle));
 
 		// Calculate relative deltas based on difference from centre of display widget
-		int dx = event->x() - middle.x();
-		int dy = event->y() - middle.y();
+		QPointF event_pos = event->position();
+		int dx = event_pos.x() - middle.x();
+		int dy = event_pos.y() - middle.y();
 
 		emit this->emulator.mouse_move_relative_signal(dx, dy);
 	} else if(pconfig_copy->mousehackon) {
 		// Follows host mouse (mousehack) mode
-		emit this->emulator.mouse_move_signal(event->x(), event->y());
+		QPointF event_pos = event->position();
+		emit this->emulator.mouse_move_signal(event_pos.x(), event_pos.y());
 	}
 
 }
