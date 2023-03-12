@@ -86,7 +86,10 @@ AudioOut::~AudioOut()
 void
 AudioOut::changeSampleRate(uint32_t samplerate)
 {
-	QAudioFormat format; /**< Qt output representing a kind of audio format */
+	// TODO: Audio currently only plays at the default device frequency (48000Hz in testing)
+
+	QAudioDevice device = QMediaDevices::defaultAudioOutput();
+	QAudioFormat format = device.preferredFormat(); /**< Qt output representing a kind of audio format */
 
 	this->samplerate = samplerate;
 
@@ -96,11 +99,11 @@ AudioOut::changeSampleRate(uint32_t samplerate)
 	}
 
 	// Set the format
-	format.setSampleRate(samplerate);
-	format.setChannelCount(2);         // Stereo
-	format.setSampleFormat(QAudioFormat::Int16);
+	// format.setSampleRate(samplerate);  // Appears to result in no sound as of Qt6.5
+	format.setChannelConfig(QAudioFormat::ChannelConfigStereo);
+	// format.setSampleFormat(QAudioFormat::Int16);  // Appears to result in no sound as of Qt6.5
 
-	audio_output = new QAudioSink(format);
+	audio_output = new QAudioSink(device, format);
 	if(QAudio::NoError != audio_output->error()) {
 		error("plt_sound: Failed to create QAudioOutput, no audio\n");
 		delete audio_output;
