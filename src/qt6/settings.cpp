@@ -271,10 +271,10 @@ config_save(Config *config)
 	char s[256];
 
 	sprintf(s, "%u", config->mem_size);
-	settings.setValue("mem_size", s);
+	settings.setValue("mem_size", QString(s));
 
 	sprintf(s, "%s", models[machine.model].name_config);
-	settings.setValue("model", s);
+	settings.setValue("model", QString(s));
 
 	if (config->vram_size != 0) {
 		settings.setValue("vram_size", "2");
@@ -286,7 +286,7 @@ config_save(Config *config)
 	settings.setValue("refresh_rate",    config->refresh);
 	settings.setValue("cdrom_enabled",   config->cdromenabled);
 	settings.setValue("cdrom_type",      config->cdromtype);
-	settings.setValue("cdrom_iso",       config->isoname);
+	settings.setValue("cdrom_iso",       QString(config->isoname));
 	settings.setValue("mouse_following", config->mousehackon);
 	settings.setValue("mouse_twobutton", config->mousetwobutton);
 
@@ -297,25 +297,25 @@ config_save(Config *config)
 	case NetworkType_EthernetBridging: sprintf(s, "ethernetbridging"); break;
 	case NetworkType_IPTunnelling:     sprintf(s, "iptunnelling"); break;
 	}
-	settings.setValue("network_type", s);
+	settings.setValue("network_type", QString(s));
 
 	if (config->username) {
-		settings.setValue("username", config->username);
+		settings.setValue("username", QString(config->username));
 	} else {
 		settings.setValue("username", "");
 	}
 	if (config->ipaddress) {
-		settings.setValue("ipaddress", config->ipaddress);
+		settings.setValue("ipaddress", QString(config->ipaddress));
 	} else {
 		settings.setValue("ipaddress", "");
 	}
 	if (config->macaddress) {
-		settings.setValue("macaddress", config->macaddress);
+		settings.setValue("macaddress", QString(config->macaddress));
 	} else {
 		settings.setValue("macaddress", "");
 	}
 	if (config->bridgename) {
-		settings.setValue("bridgename", config->bridgename);
+		settings.setValue("bridgename", QString(config->bridgename));
 	} else {
 		settings.setValue("bridgename", "");
 	}
@@ -324,7 +324,7 @@ config_save(Config *config)
 	settings.setValue("show_fullscreen_message", config->show_fullscreen_message);
 
 	if (config->network_capture) {
-		settings.setValue("network_capture", config->network_capture);
+		settings.setValue("network_capture", QString(config->network_capture));
 	}
 
 	config_nat_rules_save(settings);

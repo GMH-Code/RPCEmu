@@ -36,7 +36,7 @@
 #include "rpcemu.h"
 #include "keyboard.h"
 #include "main_window.h"
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 #include "vidc20.h"
 
 #define URL_MANUAL	"http://www.marutan.net/rpcemu/manual/"
@@ -502,7 +502,7 @@ MainWindow::keyPressEvent(QKeyEvent *event)
 
 	// Special case, handle windows menu key as being menu mouse button
 	if(Qt::Key_Menu == event->key()) {
-		emit this->emulator.mouse_press_signal(Qt::MidButton);
+		emit this->emulator.mouse_press_signal(Qt::MiddleButton);
 		return;
 	}
 
@@ -567,7 +567,7 @@ MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 	// Special case, handle windows menu key as being menu mouse button
 	if(Qt::Key_Menu == event->key()) {
-		emit this->emulator.mouse_release_signal(Qt::MidButton);
+		emit this->emulator.mouse_release_signal(Qt::MiddleButton);
 		return;
 	}
 
@@ -628,7 +628,7 @@ MainWindow::menu_screenshot()
 	                                                tr("PNG (*.png)"));
 
 	// fileName is NULL if user hit cancel
-	if (fileName != NULL) {
+	if (!fileName.isNull()) {
 		bool result = this->display->save_screenshot(fileName);
 
 		if (result == false) {
@@ -666,7 +666,7 @@ MainWindow::menu_loaddisc0()
 	    tr("All disc images (*.adf *.adl *.hfe *.img);;ADFS D/E/F Disc Image (*.adf);;ADFS L Disc Image (*.adl);;DOS Disc Image (*.img);;HFE Disc Image (*.hfe)"));
 
 	/* fileName is NULL if user hit cancel */
-	if(fileName != NULL) {
+	if(!fileName.isNull()) {
 		emit this->emulator.load_disc_0_signal(fileName);
 	}
 }
@@ -680,7 +680,7 @@ MainWindow::menu_loaddisc1()
 	    tr("All disc images (*.adf *.adl *.hfe *.img);;ADFS D/E/F Disc Image (*.adf);;ADFS L Disc Image (*.adl);;DOS Disc Image (*.img);;HFE Disc Image (*.hfe)"));
 
 	/* fileName is NULL if user hit cancel */
-	if(fileName != NULL) {
+	if(!fileName.isNull()) {
 		emit this->emulator.load_disc_1_signal(fileName);
 	}
 }
@@ -859,7 +859,7 @@ MainWindow::menu_cdrom_iso()
 	                                                tr("ISO CD-ROM Image (*.iso);;All Files (*.*)"));
 
 	/* fileName is NULL if user hit cancel */
-	if(fileName != NULL) {
+	if(!fileName.isNull()) {
 		if (!config_copy.cdromenabled) {
 			int ret = MainWindow::reset_question(this);
 

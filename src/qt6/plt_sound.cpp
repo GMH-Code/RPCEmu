@@ -24,7 +24,8 @@
 #include <iostream>
 
 #include <QAudioFormat>
-#include <QAudioOutput>
+#include <QAudioSink>
+#include <QMediaDevices>
 #include <QFile>
 #include <QThread>
 
@@ -54,20 +55,22 @@ AudioOut::AudioOut(uint32_t bufferlen)
 	this->samplerate = 0;
 
 	// Output some information to the log
-	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-	rpclog("plt_sound: qt5 Audio Device: %s\n", info.deviceName().toLocal8Bit().constData());
+	QAudioDevice info(QMediaDevices::defaultAudioOutput());
+	rpclog("plt_sound: qt6 Audio Device: %s\n", info.description().toLocal8Bit().constData());
 
+	/*
 	QStringList codecs = info.supportedCodecs();
-	rpclog("plt_sound: qt5 Audio Codecs Supported: %d\n", codecs.size());
+	rpclog("plt_sound: qt6 Audio Codecs Supported: %d\n", codecs.size());
 	for(int i = 0; i < codecs.size(); i++) {
 		rpclog("%d: %s\n", i, codecs.at(i).toLocal8Bit().constData());
 	}
 
 	QList<int> samprates = info.supportedSampleRates();
-	rpclog("plt_sound: qt5 Audio SampleRates Supported: %d\n", samprates.size());
+	rpclog("plt_sound: qt6 Audio SampleRates Supported: %d\n", samprates.size());
 	for(int i = 0; i < samprates.size(); i++) {
 		rpclog("%d: %d\n", i, samprates.at(i));
 	}
+	*/
 }
 
 AudioOut::~AudioOut()
@@ -95,12 +98,9 @@ AudioOut::changeSampleRate(uint32_t samplerate)
 	// Set the format
 	format.setSampleRate(samplerate);
 	format.setChannelCount(2);         // Stereo
-	format.setSampleSize(16);          // 16 bit sound
-	format.setCodec("audio/pcm");
-	format.setByteOrder(QAudioFormat::LittleEndian);
-	format.setSampleType(QAudioFormat::SignedInt);
+	format.setSampleFormat(QAudioFormat::Int16);
 
-	audio_output = new QAudioOutput(format);
+	audio_output = new QAudioSink(format);
 	if(QAudio::NoError != audio_output->error()) {
 		error("plt_sound: Failed to create QAudioOutput, no audio\n");
 		delete audio_output;
@@ -113,8 +113,6 @@ AudioOut::changeSampleRate(uint32_t samplerate)
 	if((int) samplerate != checkFormat.sampleRate()) {
 		rpclog("plt_sound: Tried to set sample rate %uHz but was given %dHz, audio may be distorted\n", samplerate, checkFormat.sampleRate());
 	}
-
-	audio_output->setCategory("RPCEmu"); // String used in OS Mixer
 
 	if(config.soundenabled) {
 		audio_output->setVolume(1.0f);

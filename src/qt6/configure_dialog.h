@@ -32,7 +32,7 @@
 #include <QRadioButton>
 #include <QSlider>
 
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 #include "rpcemu.h"
 
 class ConfigureDialog : public QDialog

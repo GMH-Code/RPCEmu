@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 #include <QAudioFormat>
-#include <QAudioOutput>
+#include <QAudioSink>
 #include <QFile>
 #include <QObject>
 #include <QEventLoop>
@@ -37,7 +37,7 @@ public:
 	virtual ~AudioOut();
 	void changeSampleRate(uint32_t samplerate);
 
-	QAudioOutput *audio_output;
+	QAudioSink *audio_output;
 	QIODevice *audio_io;
 	uint32_t samplerate;
 	uint32_t bufferlen;

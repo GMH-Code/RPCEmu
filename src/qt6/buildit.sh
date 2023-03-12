@@ -1,3 +1,3 @@
 #!/bin/sh
 
-qtchooser -run-tool=qmake -qt=5
+qtchooser -run-tool=qmake -qt=6

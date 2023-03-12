@@ -31,7 +31,7 @@
 #include <QtCore>
 
 #include "main_window.h"
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 
 #include <pthread.h>
 #include <sys/types.h>
@@ -1044,8 +1044,8 @@ extern "C" {
 void
 rpcemu_log_platform(void)
 {
-	/* version of qt5 this app is running on */
-	rpclog("QT5: %s\n", qVersion());
+	/* version of qt6 this app is running on */
+	rpclog("QT6: %s\n", qVersion());
 
 	/* Log display information */
 	rpclog("Number of screens: %d\n", QGuiApplication::screens().size());

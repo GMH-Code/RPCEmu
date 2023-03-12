@@ -226,7 +226,7 @@ extern const char *rpcemu_file_get_extension(const char *filename);
 extern int rpcemu_config_is_reset_required(const Config *new_config, Model new_model);
 extern void rpcemu_config_apply_new_settings(Config *new_config, Model new_model);
 
-/* rpc-qt5.cpp */
+/* rpc-qt6.cpp */
 extern void rpcemu_video_update(const uint32_t *buffer, int xsize, int ysize, int yl, int yh, int double_size, int host_xsize, int host_ysize);
 extern void rpcemu_move_host_mouse(uint16_t x, uint16_t y);
 extern void rpcemu_idle_process_events(void);

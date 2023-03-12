@@ -27,7 +27,7 @@
 #include <QLineEdit>
 #include <QRadioButton>
 
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 #include "rpcemu.h"
 
 class NetworkDialog : public QDialog

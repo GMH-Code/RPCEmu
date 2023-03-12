@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QTableWidget>
 
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 #include "rpcemu.h"
 
 class NatEditDialog;

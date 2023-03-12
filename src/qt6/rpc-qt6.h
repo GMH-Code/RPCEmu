@@ -17,8 +17,8 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef RPC_QT5_H
-#define RPC_QT5_H
+#ifndef RPC_QT6_H
+#define RPC_QT6_H
 
 #include <stdint.h>
 
@@ -122,4 +122,4 @@ private:
 	qint64 video_timer_next;		///< Time after which the video timer should trigger
 };
 
-#endif /* RPC_QT5_H */
+#endif /* RPC_QT6_H */

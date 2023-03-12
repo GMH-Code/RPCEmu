@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QSpinBox>
 
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 #include "rpcemu.h"
 
 class NatListDialog;

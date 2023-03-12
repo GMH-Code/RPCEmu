@@ -29,7 +29,7 @@
 #include "network_dialog.h"
 #include "nat_list_dialog.h"
 #include "about_dialog.h"
-#include "rpc-qt5.h"
+#include "rpc-qt6.h"
 
 #include "rpcemu.h"
 

@@ -1,4 +1,4 @@
-# http://doc.qt.io/qt-5/qmake-tutorial.html
+# http://doc.qt.io/qt-6/qmake-tutorial.html
 
 CONFIG += debug_and_release
 
@@ -38,7 +38,7 @@ HEADERS =	../superio.h \
 		main_window.h \
 		configure_dialog.h \
 		about_dialog.h \
-		rpc-qt5.h \
+		rpc-qt6.h \
 		plt_sound.h
 
 SOURCES =	../superio.c \
@@ -67,7 +67,7 @@ SOURCES =	../superio.c \
 		../disc_hfe.c \
 		../disc_mfm_common.c \
 		settings.cpp \
-		rpc-qt5.cpp \
+		rpc-qt6.cpp \
 		main_window.cpp \
 		configure_dialog.cpp \
 		about_dialog.cpp \
