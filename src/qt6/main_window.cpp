@@ -555,7 +555,11 @@ MainWindow::keyPressEvent(QKeyEvent *event)
 
 	// Regular case pass key press onto the emulator
 	if (!event->isAutoRepeat()) {
+#ifdef Q_OS_WASM
+		native_keypress_event(event->key());
+#else
 		native_keypress_event(event->nativeScanCode());
+#endif // Q_OS_WASM
 	}
 }
 
@@ -575,7 +579,11 @@ MainWindow::keyReleaseEvent(QKeyEvent *event)
 
 	// Regular case pass key release onto the emulator
 	if (!event->isAutoRepeat()) {
+#ifdef Q_OS_WASM
+		native_keyrelease_event(event->key());
+#else
 		native_keyrelease_event(event->nativeScanCode());
+#endif // Q_OS_WASM
 	}
 }
 
