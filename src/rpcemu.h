@@ -72,7 +72,7 @@ extern "C" {
 /* Note that networking is currently supported on Mac OS X with the Cocoa GUI
    version but not with the Allegro GUI. */
 #if defined __linux || defined __linux__ || defined WIN32 || defined _WIN32 || \
-    defined RPCEMU_COCOA_GUI
+    defined RPCEMU_COCOA_GUI || defined __EMSCRIPTEN__
 #define RPCEMU_NETWORKING
 #endif
 

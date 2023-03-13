@@ -367,8 +367,8 @@ MainWindow::MainWindow(Emulator &emulator)
 	configure_dialog = new ConfigureDialog(emulator, &config_copy, &model_copy, this);
 #ifdef RPCEMU_NETWORKING
 	network_dialog = new NetworkDialog(emulator, &config_copy, this);
-#endif /* RPCEMU_NETWORKING */
 	nat_list_dialog = new NatListDialog(emulator, this);
+#endif /* RPCEMU_NETWORKING */
 	about_dialog = new AboutDialog(this);
 
 	// MIPS counting
@@ -890,10 +890,10 @@ MainWindow::menu_cdrom_iso()
 	cdrom_iso_action->setChecked(false);
 }
 
+#if defined(Q_OS_LINUX)
 void
 MainWindow::menu_cdrom_ioctl()
 {
-#if defined(Q_OS_LINUX)
 	if (!config_copy.cdromenabled) {
 		int ret = MainWindow::reset_question(this);
 
@@ -916,13 +916,13 @@ MainWindow::menu_cdrom_ioctl()
 	config_copy.cdromenabled = 1;
 
 	cdrom_menu_selection_update(cdrom_ioctl_action);
-#endif /* linux */
 }
+#endif /* linux */
 
+#if defined(Q_OS_WIN32)
 void
 MainWindow::menu_cdrom_win_ioctl()
 {
-#if defined(Q_OS_WIN32)
 	QAction* action = qobject_cast<QAction *>(QObject::sender());
 	if(!action) {
 		fatal("menu_cdrom_win_ioctl no action\n");
@@ -951,8 +951,9 @@ MainWindow::menu_cdrom_win_ioctl()
 	config_copy.cdromenabled = 1;
 
 	cdrom_menu_selection_update(action);
-#endif /* win32 */
 }
+#endif /* win32 */
+
 void
 MainWindow::menu_mouse_hack()
 {
@@ -1311,7 +1312,9 @@ MainWindow::move_host_mouse(MouseMoveUpdate mouse_update)
 void
 MainWindow::send_nat_rule_to_gui(PortForwardRule rule)
 {
+#ifdef RPCEMU_NETWORKING
 	nat_list_dialog->add_nat_rule(rule);
+#endif /* RPCEMU_NETWORKING */
 }
 
 /**

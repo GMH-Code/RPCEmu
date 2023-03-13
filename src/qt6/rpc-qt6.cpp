@@ -144,11 +144,11 @@ sound_thread_start(void)
 		fatal("Couldn't create sound thread");
 	}
 
-#ifdef _GNU_SOURCE
+#if defined _GNU_SOURCE && !defined __EMSCRIPTEN__
 	if (0 != pthread_setname_np(sound_thread, "rpcemu: sound")) {
 		fatal("Couldn't set sound thread name");
 	}
-#endif // _GNU_SOURCE
+#endif // _GNU_SOURCE && !__EMSCRIPTEN__
 }
 
 /**
@@ -280,11 +280,11 @@ vidcstartthread(void)
 		fatal("Couldn't create vidc thread");
 	}
 
-#ifdef _GNU_SOURCE
+#if defined _GNU_SOURCE && !defined __EMSCRIPTEN__
 	if (0 != pthread_setname_np(video_thread, "rpcemu: vidc")) {
 		fatal("Couldn't set vidc thread name");
 	}
-#endif // _GNU_SOURCE
+#endif // _GNU_SOURCE && !__EMSCRIPTEN__
 }
 
 /**

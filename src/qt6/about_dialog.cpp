@@ -43,6 +43,9 @@ AboutDialog::AboutDialog(QWidget *parent)
 	QString str = QString("<h1>RPCEmu</h1>"
 	    "<h2>" VERSION "</h2>"
 	    "<p>Copyright 2005-%1 RPCEmu Developers</p>"
+#ifdef Q_OS_WASM
+	    "<p>WebAssembly build by Gregory Maynard-Hoare</p>"
+#endif
 	    "<p>RPCEmu is released under the terms of the "
 	    "GNU General Public License, Version 2. Please see the file "
 	    "COPYING for more details.</p>").arg(datestr + 7);

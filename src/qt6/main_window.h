@@ -122,8 +122,12 @@ private slots:
 	void menu_cdrom_disabled();
 	void menu_cdrom_empty();
 	void menu_cdrom_iso();
+#if defined(Q_OS_LINUX)
 	void menu_cdrom_ioctl();
+#endif // linux
+#if defined(Q_OS_WIN32)
 	void menu_cdrom_win_ioctl();
+#endif // win32
 	void menu_configure();
 #ifdef RPCEMU_NETWORKING
 	void menu_networking();

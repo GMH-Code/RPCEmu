@@ -35,11 +35,14 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <linux/if_tun.h>
 #include <pwd.h>
 #include <grp.h>
 #include <signal.h>
+
+#ifndef __EMSCRIPTEN__
+#include <linux/if_tun.h>
 #include <linux/sockios.h>
+#endif
 
 #include "rpcemu.h"
 #include "mem.h"
@@ -86,6 +89,10 @@ static int dropprivileges(uid_t uid, gid_t gid)
 /* Open and configure the tunnel device */
 static int tun_alloc(void)
 {
+#ifdef __EMSCRIPTEN__
+    error("Cannot configure tunnel device in Emscripten");
+    return -1;
+#else
     struct ifreq ifr;
     struct sockaddr_in *addr;
     int fd;
@@ -197,6 +204,7 @@ static int tun_alloc(void)
     }
 
     return fd;
+#endif
 }
 
 #define HEADERLEN 18

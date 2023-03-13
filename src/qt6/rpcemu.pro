@@ -74,7 +74,7 @@ SOURCES =	../superio.c \
 		plt_sound.cpp
 
 # NAT Networking
-linux | win32 {
+linux | win32 | wasm {
 	HEADERS +=	../network-nat.h \
 			nat_edit_dialog.h \
 			nat_list_dialog.h
@@ -150,18 +150,30 @@ win32 {
 }
 
 linux {
-	SOURCES +=	../cdrom-linuxioctl.c \
-			../network-linux.c \
+	SOURCES +=	../cdrom-linuxioctl.c
+}
+
+linux | wasm {
+	SOURCES +=	../network-linux.c \
 			../network.c \
 			network_dialog.cpp
 	HEADERS +=	../network.h \
 			network_dialog.h
 }
 
-unix {
+unix | wasm {
 	SOURCES +=	keyboard_x.c \
 			../hostfs-unix.c \
 			../rpc-linux.c
+}
+
+wasm {
+	QMAKE_LFLAGS += --preload-file ../../roms/riscos@/roms/riscos \
+			--preload-file ../../netroms@/netroms \
+			--preload-file ../../poduleroms@/poduleroms \
+			--preload-file ../../hostfs@/hostfs \
+			--preload-file ../../cmos.ram@/cmos.ram \
+			--preload-file ../../rpc.cfg@/rpc.cfg
 }
 
 # Place exes in top level directory
