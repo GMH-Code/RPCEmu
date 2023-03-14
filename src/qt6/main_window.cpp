@@ -404,6 +404,9 @@ MainWindow::~MainWindow()
 int
 MainWindow::reset_question(QWidget *parent)
 {
+#ifdef Q_OS_WASM
+	return QMessageBox::Ok;
+#else
 	QMessageBox msgBox(parent);
 
 	msgBox.setWindowTitle("RPCEmu");
@@ -413,6 +416,7 @@ MainWindow::reset_question(QWidget *parent)
 	msgBox.setDefaultButton(QMessageBox::Cancel);
 
 	return msgBox.exec();
+#endif /* Q_OS_WASM */
 }
 
 /**
@@ -457,6 +461,7 @@ MainWindow::release_held_keys()
 void
 MainWindow::closeEvent(QCloseEvent *event)
 {
+#ifndef Q_OS_WASM
 	// Request confirmation to exit
 	QMessageBox msgBox(QMessageBox::Question,
 	    "RPCEmu",
@@ -473,6 +478,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 		event->ignore();
 		return;
 	}
+#endif /* !Q_OS_WASM */
 
 	// Disconnect the applicationStateChanged event, because our handler
 	// can generate messages the machine won't be able to handle when quit
@@ -646,7 +652,11 @@ MainWindow::menu_screenshot()
 			msgBox.setText("Error saving screenshot");
 			msgBox.setStandardButtons(QMessageBox::Ok);
 			msgBox.setDefaultButton(QMessageBox::Ok);
+#ifdef Q_OS_WASM
+			msgBox.open();
+#else
 			msgBox.exec();
+#endif /* Q_OS_WASM */
 		}
 	}
 }
@@ -698,13 +708,20 @@ MainWindow::menu_loaddisc1()
 void
 MainWindow::menu_configure()
 {
+#ifdef Q_OS_WASM
+	configure_dialog->open(); // Modeless
+#else
 	configure_dialog->exec(); // Modal
+#endif /* Q_OS_WASM */
 }
 
 #ifdef RPCEMU_NETWORKING
 void
 MainWindow::menu_networking()
 {
+#ifdef Q_OS_WASM
+	network_dialog->open(); // Modeless
+#else
 	network_dialog->exec(); // Modal
 
 	// Update the NAT Port Forwarding Rules menu item based on choice
@@ -713,12 +730,17 @@ MainWindow::menu_networking()
 	} else {
 		nat_list_action->setEnabled(false);
 	}
+#endif /* Q_OS_WASM */
 }
 
 void
 MainWindow::menu_nat_list()
 {
+#ifdef Q_OS_WASM
+	nat_list_dialog->open(); // Modeless
+#else
 	nat_list_dialog->exec(); // Modal
+#endif /* Q_OS_WASM */
 }
 #endif /* RPCEMU_NETWORKING */
 
@@ -731,6 +753,7 @@ MainWindow::menu_fullscreen()
 	if (!full_screen) {
 		// Change Windowed -> Full Screen
 
+#ifndef Q_OS_WASM
 		// Make sure people know how to exit full-screen
 		if (config_copy.show_fullscreen_message) {
 			QCheckBox *checkBox = new QCheckBox("Do not show this message again");
@@ -759,6 +782,7 @@ MainWindow::menu_fullscreen()
 				config_copy.show_fullscreen_message = 0;
 			}
 		}
+#endif /* !Q_OS_WASM */
 
 		display->set_full_screen(true);
 
@@ -1166,9 +1190,11 @@ MainWindow::create_menus()
 #ifdef RPCEMU_NETWORKING
 	settings_menu->addAction(networking_action);
 	settings_menu->addAction(nat_list_action);
+#ifndef Q_OS_WASM
 	if (this->config_copy.network_type != NetworkType_NAT) {
 		nat_list_action->setEnabled(false);
 	}
+#endif /* !Q_OS_WASM */
 #endif /* RPCEMU_NETWORKING */
 	settings_menu->addSeparator();
 	settings_menu->addAction(fullscreen_action);
@@ -1397,7 +1423,9 @@ MainWindow::mips_timer_timeout()
 void
 MainWindow::error(QString error)
 {
+#ifndef Q_OS_WASM
 	QMessageBox::warning(this, "RPCEmu Error", error);
+#endif /* !Q_OS_WASM */
 }
 
 /**
@@ -1409,7 +1437,9 @@ MainWindow::error(QString error)
 void
 MainWindow::fatal(QString error)
 {
+#ifndef Q_OS_WASM
 	QMessageBox::critical(this, "RPCEmu Fatal Error", error);
+#endif /* !Q_OS_WASM */
 
 	exit(EXIT_FAILURE);
 }

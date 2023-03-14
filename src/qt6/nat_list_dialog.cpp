@@ -98,7 +98,11 @@ NatListDialog::dialog_accepted()
 	PortForwardRule rule = { PORT_FORWARD_TCP, 1, 1 };
 
 	nat_edit_dialog->set_values(false /* is Add */, rule);
+#ifdef Q_OS_WASM
+	nat_edit_dialog->open(); // Modeless
+#else
 	nat_edit_dialog->exec(); // Modal
+#endif /* Q_OS_WASM */
 }
 
 /**
@@ -181,6 +185,10 @@ NatListDialog::delete_button_clicked()
 		rule.emu_port  = rules_tablewidget->item(row, 1)->text().toUInt();
 		rule.host_port = rules_tablewidget->item(row, 2)->text().toUInt();
 
+#ifdef Q_OS_WASM
+		rules_tablewidget->removeRow(row);
+		emit this->emulator.nat_rule_remove_signal(rule);
+#else
 		QMessageBox msgBox(this);
 		msgBox.setWindowTitle("RPCEmu");
 		msgBox.setText(QString("Are you sure you want to delete NAT rule %1, emu port %2, host port %3?")
@@ -206,6 +214,7 @@ NatListDialog::delete_button_clicked()
 		default:
 			break;
 		}
+#endif /* Q_OS_WASM */
 	}
 }
 
@@ -228,7 +237,11 @@ NatListDialog::edit_button_clicked()
 
 		// Open dialog
 		nat_edit_dialog->set_values(true, rule);
+#ifdef Q_OS_WASM
+		nat_edit_dialog->open(); // Modeless
+#else
 		nat_edit_dialog->exec(); // Modal
+#endif
 	}
 }
 
