@@ -17,8 +17,8 @@ INCLUDEPATH += ../
 #	Common symbols across object files will produce a link error
 #	This is the default from GCC 10
 #
-QMAKE_CFLAGS   += -Werror=switch -fno-common
-QMAKE_CXXFLAGS += -Werror=switch -fno-common
+QMAKE_CFLAGS   += -Werror=switch -fno-common -std=gnu17
+QMAKE_CXXFLAGS += -Werror=switch -fno-common -std=gnu++17
 
 
 HEADERS =	../superio.h \
