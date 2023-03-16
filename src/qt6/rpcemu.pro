@@ -179,7 +179,8 @@ unix | wasm {
 }
 
 wasm {
-	QMAKE_LFLAGS += --preload-file ../../roms/riscos@/roms/riscos \
+	QMAKE_LFLAGS += -no-mimetype-database \
+			--preload-file ../../roms/riscos@/roms/riscos \
 			--preload-file ../../netroms@/netroms \
 			--preload-file ../../poduleroms@/poduleroms \
 			--preload-file ../../hostfs@/hostfs \
