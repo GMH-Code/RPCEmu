@@ -1217,6 +1217,11 @@ MainWindow::create_menus()
 	help_menu->addSeparator();
 	help_menu->addAction(about_action);
 
+#ifdef Q_OS_WASM
+	menuBar()->addMenu(tr("|"));
+	perf_menu = menuBar()->addMenu(tr("RPCEmu"));
+#endif /* Q_OS_WASM */
+
 	// Add handlers to track menu show/hide events
 	add_menu_show_hide_handlers();
 }
@@ -1411,7 +1416,11 @@ MainWindow::mips_timer_timeout()
 	    .arg(capture_text);
 #endif
 
+#ifdef Q_OS_WASM
+	perf_menu->setTitle(window_title);
+#else
 	setWindowTitle(window_title);
+#endif /* Q_OS_WASM */
 }
 
 /**

@@ -192,6 +192,9 @@ private:
 	QMenu *settings_menu;
 	QMenu *mouse_menu;
 	QMenu *help_menu;
+#ifdef Q_OS_WASM
+	QMenu *perf_menu;
+#endif /* Q_OS_WASM */
 
 	// Actions on File menu
 	QAction *screenshot_action;
