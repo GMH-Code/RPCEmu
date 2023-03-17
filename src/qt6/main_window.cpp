@@ -683,23 +683,39 @@ MainWindow::load_disc(int drive)
 #ifdef Q_OS_WASM
 	auto file_content_ready = [this, drive](const QString &filename, const QByteArray &file_content)
 	{
-		if (!filename.isEmpty()) {
+		if (filename.isEmpty()) {
+			// Cancelled filename prompt
+			if (drive == -1)
+				cdrom_iso_action->setChecked(false);
+		} else {
+			// Accepted filename prompt
 			QString filename_local;
 
-			if (drive) {
+			// Allocate MEMFS filename
+			if (drive == -1) {
+				filename_local = "/home/web_user/cdrom.iso";
+			} else if (drive) {
 				filename_local = "/home/web_user/floppy1.adf";
 			} else {
 				filename_local = "/home/web_user/floppy0.adf";
 			}
 
+			// Write the file into MEMFS (allowing overwrites)
 			QFile file(filename_local);
 			file.open(QIODevice::WriteOnly);
 			file.write(file_content);
 			file.close();
 
-			if (drive) {
+			if (drive == -1) {
+				// Notify emulator of CD-ROM ISO
+				emit this->emulator.cdrom_load_iso_signal(filename_local);
+				config_copy.cdromenabled = 1;
+				cdrom_menu_selection_update(cdrom_iso_action);
+			} else if (drive) {
+				// Floppy drive 1 image
 				emit this->emulator.load_disc_1_signal(filename_local);
 			} else {
+				// Floppy drive 0 image
 				emit this->emulator.load_disc_0_signal(filename_local);
 			}
 		}
@@ -917,6 +933,9 @@ MainWindow::menu_cdrom_empty()
 void
 MainWindow::menu_cdrom_iso()
 {
+#ifdef Q_OS_WASM
+	load_disc(-1);
+#else
 	QString fileName = QFileDialog::getOpenFileName(this,
 	                                                tr("Open ISO Image"),
 	                                                "",
@@ -950,6 +969,7 @@ MainWindow::menu_cdrom_iso()
 	}
 
 	cdrom_iso_action->setChecked(false);
+#endif /* Q_OS_WASM */
 }
 
 #if defined(Q_OS_LINUX)
