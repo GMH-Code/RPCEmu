@@ -177,6 +177,8 @@ private:
 	void native_keyrelease_event(unsigned scan_code);
 	void release_held_keys();
 
+	void load_disc(int drive);
+
 	bool full_screen;
 	bool reenable_mousehack; ///< Did we disable mousehack entering fullscreen and have to reenable it on leaving fullscreen?
 

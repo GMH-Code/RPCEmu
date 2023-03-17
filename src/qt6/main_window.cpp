@@ -677,9 +677,36 @@ MainWindow::menu_reset()
 	}
 }
 
-void 
-MainWindow::menu_loaddisc0()
+void
+MainWindow::load_disc(int drive)
 {
+#ifdef Q_OS_WASM
+	auto file_content_ready = [this, drive](const QString &filename, const QByteArray &file_content)
+	{
+		if (!filename.isEmpty()) {
+			QString filename_local;
+
+			if (drive) {
+				filename_local = "/home/web_user/floppy1.adf";
+			} else {
+				filename_local = "/home/web_user/floppy0.adf";
+			}
+
+			QFile file(filename_local);
+			file.open(QIODevice::WriteOnly);
+			file.write(file_content);
+			file.close();
+
+			if (drive) {
+				emit this->emulator.load_disc_1_signal(filename_local);
+			} else {
+				emit this->emulator.load_disc_0_signal(filename_local);
+			}
+		}
+	};
+
+	QFileDialog::getOpenFileContent("ADFS D/E/F Disc Image (*.adf)",  file_content_ready);
+#else
 	QString fileName = QFileDialog::getOpenFileName(this,
 	    tr("Open Disc Image"),
 	    "",
@@ -687,22 +714,25 @@ MainWindow::menu_loaddisc0()
 
 	/* fileName is NULL if user hit cancel */
 	if(!fileName.isNull()) {
-		emit this->emulator.load_disc_0_signal(fileName);
+		if (drive) {
+			emit this->emulator.load_disc_1_signal(fileName);
+		} else {
+			emit this->emulator.load_disc_0_signal(fileName);
+		};
 	}
+#endif /* Q_OS_WASM */
 }
 
-void 
+void
+MainWindow::menu_loaddisc0()
+{
+	load_disc(0);
+}
+
+void
 MainWindow::menu_loaddisc1()
 {
-	QString fileName = QFileDialog::getOpenFileName(this,
-	    tr("Open Disc Image"),
-	    "",
-	    tr("All disc images (*.adf *.adl *.hfe *.img);;ADFS D/E/F Disc Image (*.adf);;ADFS L Disc Image (*.adl);;DOS Disc Image (*.img);;HFE Disc Image (*.hfe)"));
-
-	/* fileName is NULL if user hit cancel */
-	if(!fileName.isNull()) {
-		emit this->emulator.load_disc_1_signal(fileName);
-	}
+	load_disc(1);
 }
 
 void
