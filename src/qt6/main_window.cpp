@@ -41,6 +41,10 @@
 
 #define URL_MANUAL	"http://www.marutan.net/rpcemu/manual/"
 #define URL_WEBSITE	"http://www.marutan.net/rpcemu/"
+#define DEV_FLOPPY_1  1
+#define DEV_FLOPPY_0  0
+#define DEV_CDROM    -1
+#define DEV_HOSTFS   -2
 
 MainDisplay::MainDisplay(Emulator &emulator, QWidget *parent)
     : QWidget(parent),
@@ -685,19 +689,26 @@ MainWindow::load_disc(int drive)
 	{
 		if (filename.isEmpty()) {
 			// Cancelled filename prompt
-			if (drive == -1)
+			if (drive == DEV_CDROM)
 				cdrom_iso_action->setChecked(false);
 		} else {
 			// Accepted filename prompt
 			QString filename_local;
 
 			// Allocate MEMFS filename
-			if (drive == -1) {
-				filename_local = "/home/web_user/cdrom.iso";
-			} else if (drive) {
-				filename_local = "/home/web_user/floppy1.adf";
-			} else {
-				filename_local = "/home/web_user/floppy0.adf";
+			switch (drive) {
+				case DEV_CDROM:
+					filename_local = "/home/web_user/cdrom.iso";
+					break;
+				case DEV_FLOPPY_1:
+					filename_local = "/home/web_user/floppy1.adf";
+					break;
+				case DEV_FLOPPY_0:
+					filename_local = "/home/web_user/floppy0.adf";
+					break;
+				default:
+					filename_local = "/hostfs/" + filename;
+					break;
 			}
 
 			// Write the file into MEMFS (allowing overwrites)
@@ -706,22 +717,24 @@ MainWindow::load_disc(int drive)
 			file.write(file_content);
 			file.close();
 
-			if (drive == -1) {
-				// Notify emulator of CD-ROM ISO
-				emit this->emulator.cdrom_load_iso_signal(filename_local);
-				config_copy.cdromenabled = 1;
-				cdrom_menu_selection_update(cdrom_iso_action);
-			} else if (drive) {
-				// Floppy drive 1 image
-				emit this->emulator.load_disc_1_signal(filename_local);
-			} else {
-				// Floppy drive 0 image
-				emit this->emulator.load_disc_0_signal(filename_local);
+			// Notify emulator of inserted media.  Not necessary for HostFS file uploads
+			switch (drive) {
+				case DEV_CDROM:
+					config_copy.cdromenabled = 1;
+					cdrom_menu_selection_update(cdrom_iso_action);
+					emit this->emulator.cdrom_load_iso_signal(filename_local);
+					break;
+				case DEV_FLOPPY_1:
+					emit this->emulator.load_disc_1_signal(filename_local);
+					break;
+				case DEV_FLOPPY_0:
+					emit this->emulator.load_disc_0_signal(filename_local);
+					break;
 			}
 		}
 	};
 
-	QFileDialog::getOpenFileContent("ADFS D/E/F Disc Image (*.adf)",  file_content_ready);
+	QFileDialog::getOpenFileContent("All Files (*.*)",  file_content_ready);
 #else
 	QString fileName = QFileDialog::getOpenFileName(this,
 	    tr("Open Disc Image"),
@@ -730,7 +743,7 @@ MainWindow::load_disc(int drive)
 
 	/* fileName is NULL if user hit cancel */
 	if(!fileName.isNull()) {
-		if (drive) {
+		if (drive == DEV_FLOPPY_1) {
 			emit this->emulator.load_disc_1_signal(fileName);
 		} else {
 			emit this->emulator.load_disc_0_signal(fileName);
@@ -742,14 +755,22 @@ MainWindow::load_disc(int drive)
 void
 MainWindow::menu_loaddisc0()
 {
-	load_disc(0);
+	load_disc(DEV_FLOPPY_0);
 }
 
 void
 MainWindow::menu_loaddisc1()
 {
-	load_disc(1);
+	load_disc(DEV_FLOPPY_1);
 }
+
+#ifdef Q_OS_WASM
+void
+MainWindow::menu_hostfs_upload()
+{
+	load_disc(DEV_HOSTFS);
+}
+#endif /* Q_OS_WASM */
 
 void
 MainWindow::menu_configure()
@@ -934,7 +955,7 @@ void
 MainWindow::menu_cdrom_iso()
 {
 #ifdef Q_OS_WASM
-	load_disc(-1);
+	load_disc(DEV_CDROM);
 #else
 	QString fileName = QFileDialog::getOpenFileName(this,
 	                                                tr("Open ISO Image"),
@@ -1155,6 +1176,10 @@ MainWindow::create_actions()
 		}
 	}
 #endif
+#ifdef Q_OS_WASM
+	hostfs_upload_action = new QAction(tr("Upload to HostFS..."), this);
+	connect(hostfs_upload_action, &QAction::triggered, this, &MainWindow::menu_hostfs_upload);
+#endif /* Q_OS_WASM */
 
 	// Actions on Settings menu
 	configure_action = new QAction(tr("Configure..."), this);
@@ -1216,6 +1241,10 @@ MainWindow::create_menus()
 	disc_menu = menuBar()->addMenu(tr("Disc"));
 	floppy_menu = disc_menu->addMenu(tr("Floppy"));
 	cdrom_menu = disc_menu->addMenu(tr("CD-ROM"));
+#ifdef Q_OS_WASM
+	disc_menu->addSeparator();
+	disc_menu->addAction(hostfs_upload_action);
+#endif /* Q_OS_WASM */
 
 	// Disc->Floppy menu
 	floppy_menu->addAction(loaddisc0_action);

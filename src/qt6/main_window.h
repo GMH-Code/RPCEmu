@@ -128,6 +128,9 @@ private slots:
 #if defined(Q_OS_WIN32)
 	void menu_cdrom_win_ioctl();
 #endif // win32
+#ifdef Q_OS_WASM
+	void menu_hostfs_upload();
+#endif /* Q_OS_WASM */
 	void menu_configure();
 #ifdef RPCEMU_NETWORKING
 	void menu_networking();
@@ -215,6 +218,9 @@ private:
 	std::vector<QAction *> cdrom_win_ioctl_actions;
 #endif /* win32 */
 	QAction *cdrom_iso_action;
+#ifdef Q_OS_WASM
+	QAction *hostfs_upload_action;
+#endif /* Q_OS_WASM */
 
 	// Actions on Settings menu (and submenus)
 	QAction *configure_action;
