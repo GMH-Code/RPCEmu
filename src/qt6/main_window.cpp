@@ -689,11 +689,7 @@ MainWindow::load_disc(int drive)
 #ifdef Q_OS_WASM
 	auto file_content_ready = [this, drive](const QString &filename, const QByteArray &file_content)
 	{
-		if (filename.isEmpty()) {
-			// Cancelled filename prompt
-			if (drive == DEV_CDROM)
-				cdrom_iso_action->setChecked(false);
-		} else {
+		if (!filename.isEmpty()) {
 			// Accepted filename prompt
 			QString filename_local;
 
@@ -957,6 +953,7 @@ void
 MainWindow::menu_cdrom_iso()
 {
 #ifdef Q_OS_WASM
+	cdrom_iso_action->setChecked(!cdrom_iso_action->isChecked());
 	load_disc(DEV_CDROM);
 #else
 	QString fileName = QFileDialog::getOpenFileName(this,
