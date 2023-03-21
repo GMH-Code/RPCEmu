@@ -183,7 +183,7 @@ wasm {
 			--preload-file ../../roms/riscos@/roms/riscos \
 			--preload-file ../../netroms@/netroms \
 			--preload-file ../../poduleroms@/poduleroms \
-			--preload-file ../../hostfs@/hostfs \
+			--preload-file ../../wasm/hostfs@/hostfs \
 			--preload-file ../../cmos.ram@/cmos.ram \
 			--preload-file ../../rpc.cfg@/rpc.cfg
 }
