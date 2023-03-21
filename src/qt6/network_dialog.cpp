@@ -39,6 +39,9 @@ NetworkDialog::NetworkDialog(Emulator &emulator, Config *config_copy, QWidget *p
 	net_off = new QRadioButton("Off");
 	net_nat = new QRadioButton("Network Address Translation (NAT)");
 	net_bridging = new QRadioButton("Ethernet Bridging");
+#ifdef Q_OS_WASM
+	net_bridging->setEnabled(false);
+#endif
 	net_tunnelling = new QRadioButton("IP Tunnelling");
 
 	bridge_label = new QLabel("Bridge Name");
@@ -91,8 +94,10 @@ NetworkDialog::NetworkDialog(Emulator &emulator, Config *config_copy, QWidget *p
 	// Set the values of the window to the config values
 	applyConfig();
 
+#ifndef Q_OS_WASM
 	// Remove resize on Dialog
 	this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 }
 
 NetworkDialog::~NetworkDialog()

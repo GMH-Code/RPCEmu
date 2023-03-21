@@ -346,7 +346,9 @@ MainWindow::MainWindow(Emulator &emulator)
 
 	readSettings();
 
+#ifndef Q_OS_WASM
 	this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 	setUnifiedTitleAndToolBarOnMac(true);
 
 	// Update the gui with the initial config setting
@@ -531,7 +533,9 @@ MainWindow::keyPressEvent(QKeyEvent *event)
 
 			menuBar()->setVisible(true);
 			this->showNormal();
+#ifndef Q_OS_WASM
 			this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 
 			full_screen = false;
 
@@ -642,6 +646,7 @@ MainWindow::native_keyrelease_event(unsigned scan_code)
 void
 MainWindow::menu_screenshot()
 {
+#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
 	QString fileName = QFileDialog::getSaveFileName(this,
 	                                                tr("Save Screenshot"),
 	                                                "screenshot.png",
@@ -656,13 +661,10 @@ MainWindow::menu_screenshot()
 			msgBox.setText("Error saving screenshot");
 			msgBox.setStandardButtons(QMessageBox::Ok);
 			msgBox.setDefaultButton(QMessageBox::Ok);
-#ifdef Q_OS_WASM
-			msgBox.open();
-#else
 			msgBox.exec();
-#endif /* Q_OS_WASM */
 		}
 	}
+#endif /* !Q_OS_WASM */
 }
 
 void
@@ -817,10 +819,10 @@ MainWindow::menu_nat_list()
 void
 MainWindow::menu_fullscreen()
 {
+#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
 	if (!full_screen) {
 		// Change Windowed -> Full Screen
 
-#ifndef Q_OS_WASM
 		// Make sure people know how to exit full-screen
 		if (config_copy.show_fullscreen_message) {
 			QCheckBox *checkBox = new QCheckBox("Do not show this message again");
@@ -849,7 +851,6 @@ MainWindow::menu_fullscreen()
 				config_copy.show_fullscreen_message = 0;
 			}
 		}
-#endif /* !Q_OS_WASM */
 
 		display->set_full_screen(true);
 
@@ -873,6 +874,7 @@ MainWindow::menu_fullscreen()
 
 	// Keep tick of menu item in sync
 	fullscreen_action->setChecked(false);
+#endif /* !Q_OS_WASM */
 }
 
 void
@@ -1060,6 +1062,7 @@ MainWindow::menu_cdrom_win_ioctl()
 void
 MainWindow::menu_mouse_hack()
 {
+#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
 	emit this->emulator.mouse_hack_signal();
 	config_copy.mousehackon ^= 1;
 
@@ -1074,6 +1077,7 @@ MainWindow::menu_mouse_hack()
 		// Show pointer in mouse capture mode when it's not been captured
 		this->display->setCursor(Qt::ArrowCursor);
 	}
+#endif /* !Q_OS_WASM */
 }
 
 void
@@ -1299,6 +1303,9 @@ MainWindow::create_menus()
 #ifdef Q_OS_WASM
 	menuBar()->addMenu(tr("|"));
 	perf_menu = menuBar()->addMenu(tr("RPCEmu"));
+	screenshot_action->setEnabled(false);
+	fullscreen_action->setEnabled(false);
+	mouse_hack_action->setEnabled(false);
 #endif /* Q_OS_WASM */
 
 	// Add handlers to track menu show/hide events
@@ -1363,8 +1370,10 @@ MainWindow::main_display_update(VideoUpdate video_update)
 			// Resize Widget containing image
 			display->setFixedSize(video_update.host_xsize, video_update.host_ysize);
 
+#ifndef Q_OS_WASM
 			// Resize Window
 			this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 		}
 	}
 

@@ -68,8 +68,10 @@ AboutDialog::AboutDialog(QWidget *parent)
 	vbox->addLayout(hbox);
 	vbox->addWidget(buttons_box);
 
+#ifndef Q_OS_WASM
 	// Remove resize on Dialog
 	this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 
 	connect(buttons_box, &QDialogButtonBox::accepted, this, &QDialog::close);
 }

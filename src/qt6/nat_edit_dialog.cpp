@@ -67,8 +67,10 @@ NatEditDialog::NatEditDialog(QWidget *parent)
 
 	connect(this, &QDialog::rejected, this, &NatEditDialog::dialog_rejected);
 
+#ifndef Q_OS_WASM
 	// Remove resize on Dialog
 	this->setFixedSize(this->sizeHint());
+#endif /* !Q_OS_WASM */
 }
 
 
