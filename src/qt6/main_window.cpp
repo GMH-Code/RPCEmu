@@ -1502,7 +1502,8 @@ MainWindow::mips_timer_timeout()
 #endif
 
 #ifdef Q_OS_WASM
-	perf_menu->setTitle(window_title);
+	if (!this->menu_open)
+		perf_menu->setTitle(window_title);
 #else
 	setWindowTitle(window_title);
 #endif /* Q_OS_WASM */
