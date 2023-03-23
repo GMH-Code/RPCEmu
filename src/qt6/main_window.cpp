@@ -317,6 +317,23 @@ MainDisplay::save_screenshot(QString filename)
 	return this->image->save(filename, "png");
 }
 
+/**
+ * Export the display image to a local file via the web browser's save feature
+ */
+void
+MainDisplay::save_screenshot_wasm()
+{
+	QByteArray imageData;
+	QBuffer imageBuffer(&imageData);
+
+	imageBuffer.open(QIODevice::WriteOnly);
+	bool result = this->image->save(&imageBuffer, "PNG");
+	imageBuffer.close();
+
+	if (result)
+		QFileDialog::saveFileContent(imageData, "screenshot.png");
+}
+
 MainWindow::MainWindow(Emulator &emulator)
     : full_screen(false),
       reenable_mousehack(false),
@@ -646,7 +663,9 @@ MainWindow::native_keyrelease_event(unsigned scan_code)
 void
 MainWindow::menu_screenshot()
 {
-#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
+#ifdef Q_OS_WASM
+	this->display->save_screenshot_wasm();
+#else
 	QString fileName = QFileDialog::getSaveFileName(this,
 	                                                tr("Save Screenshot"),
 	                                                "screenshot.png",
@@ -664,7 +683,7 @@ MainWindow::menu_screenshot()
 			msgBox.exec();
 		}
 	}
-#endif /* !Q_OS_WASM */
+#endif /* Q_OS_WASM */
 }
 
 void
@@ -1300,7 +1319,6 @@ MainWindow::create_menus()
 #ifdef Q_OS_WASM
 	menuBar()->addMenu(tr("|"));
 	perf_menu = menuBar()->addMenu(tr("RPCEmu"));
-	screenshot_action->setEnabled(false);
 	fullscreen_action->setEnabled(false);
 	mouse_hack_action->setEnabled(false);
 #endif /* Q_OS_WASM */

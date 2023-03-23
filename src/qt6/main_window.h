@@ -69,6 +69,7 @@ public:
 	void update_image(const QImage& img, int yl, int yh, int double_size);
 	int get_double_size();
 	bool save_screenshot(QString filename);
+	void save_screenshot_wasm();
 
 protected:
 	void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
