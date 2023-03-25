@@ -102,9 +102,6 @@ ConfigureDialog::ConfigureDialog(Emulator &emulator, Config *config_copy, Model 
 
 	// Create sound checkbox
 	sound_checkbox = new QCheckBox("Sound");
-#ifdef Q_OS_WASM // Audio isn't working with WASM at the moment
-	sound_checkbox->setEnabled(false);
-#endif /* Q_OS_WASM */
 
 	// Create refresh
 	refresh_slider = new QSlider(Qt::Horizontal);

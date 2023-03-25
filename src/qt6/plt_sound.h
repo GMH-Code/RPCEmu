@@ -22,11 +22,7 @@
 
 #include <stdint.h>
 
-#include <QAudioFormat>
 #include <QAudioSink>
-#include <QFile>
-#include <QObject>
-#include <QEventLoop>
 
 
 class AudioOut : public QObject

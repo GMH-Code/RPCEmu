@@ -3,12 +3,7 @@
 CONFIG += debug_and_release
 
 
-QT += core widgets gui
-
-!wasm {
-	QT += multimedia
-}
-
+QT += core widgets gui multimedia
 INCLUDEPATH += ../
 
 # -Werror=switch
@@ -43,7 +38,8 @@ HEADERS =	../superio.h \
 		main_window.h \
 		configure_dialog.h \
 		about_dialog.h \
-		rpc-qt6.h
+		rpc-qt6.h \
+		plt_sound.h
 
 SOURCES =	../superio.c \
 		../cdrom-iso.c \
@@ -74,15 +70,8 @@ SOURCES =	../superio.c \
 		rpc-qt6.cpp \
 		main_window.cpp \
 		configure_dialog.cpp \
-		about_dialog.cpp
-
-wasm {
-	HEADERS +=	stubs/plt_sound.h
-	SOURCES +=	stubs/plt_sound.cpp
-} else {
-	HEADERS +=	plt_sound.h
-	SOURCES +=	plt_sound.cpp
-}
+		about_dialog.cpp \
+		plt_sound.cpp
 
 # NAT Networking
 linux | win32 | wasm {

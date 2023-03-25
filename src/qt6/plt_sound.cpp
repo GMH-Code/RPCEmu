@@ -26,8 +26,6 @@
 #include <QAudioFormat>
 #include <QAudioSink>
 #include <QMediaDevices>
-#include <QFile>
-#include <QThread>
 
 #include "rpcemu.h"
 #include "plt_sound.h"
@@ -86,8 +84,6 @@ AudioOut::~AudioOut()
 void
 AudioOut::changeSampleRate(uint32_t samplerate)
 {
-	// TODO: Audio currently only plays at the default device frequency (48000Hz in testing)
-
 	QAudioDevice device = QMediaDevices::defaultAudioOutput();
 	QAudioFormat format = device.preferredFormat(); /**< Qt output representing a kind of audio format */
 
@@ -99,9 +95,9 @@ AudioOut::changeSampleRate(uint32_t samplerate)
 	}
 
 	// Set the format
-	// format.setSampleRate(samplerate);  // Appears to result in no sound as of Qt6.5
+	format.setSampleRate(samplerate);
 	format.setChannelConfig(QAudioFormat::ChannelConfigStereo);
-	// format.setSampleFormat(QAudioFormat::Int16);  // Appears to result in no sound as of Qt6.5
+	format.setSampleFormat(QAudioFormat::Int16);
 
 	audio_output = new QAudioSink(device, format);
 	if(QAudio::NoError != audio_output->error()) {
