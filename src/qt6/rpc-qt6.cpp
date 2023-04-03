@@ -462,8 +462,28 @@ int main (int argc, char ** argv)
 	MainWindow main_window(*emulator);
 	pMainWin = &main_window;
 
+#ifdef Q_OS_WASM
+	// Place main window in container
+	QMainWindow *container_window = new QMainWindow;
+	QWidget *central_widget = new QTabWidget;
+	QBoxLayout *layout_widget = new QBoxLayout(QBoxLayout::LeftToRight, central_widget);
+	container_window->setWindowTitle("RPCEmu");
+	container_window->setCentralWidget(central_widget);
+	central_widget->setObjectName(QString("Bkg"));
+	central_widget->setStyleSheet("QWidget#Bkg {background-color: #222;}");
+	layout_widget->addWidget(pMainWin);
+	layout_widget->setAlignment(pMainWin, Qt::AlignCenter);
+	main_window.setFocusPolicy(Qt::StrongFocus);
+
+	// Close the container when the emulator is shut down
+	container_window->connect(emulator, SIGNAL(destroyed()), container_window, SLOT(close()));
+
+	// Show the container
+	container_window->show();
+#else
 	// Show Main Window
 	main_window.show();
+#endif /* Q_OS_WASM */
 
 	// Store a reference to the GUI thread
 	// Needed to handle displaying fatal() and error()

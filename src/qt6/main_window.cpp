@@ -363,9 +363,7 @@ MainWindow::MainWindow(Emulator &emulator)
 
 	readSettings();
 
-#ifndef Q_OS_WASM
 	this->setFixedSize(this->sizeHint());
-#endif /* !Q_OS_WASM */
 	setUnifiedTitleAndToolBarOnMac(true);
 
 	// Update the gui with the initial config setting
@@ -550,9 +548,7 @@ MainWindow::keyPressEvent(QKeyEvent *event)
 
 			menuBar()->setVisible(true);
 			this->showNormal();
-#ifndef Q_OS_WASM
 			this->setFixedSize(this->sizeHint());
-#endif /* !Q_OS_WASM */
 
 			full_screen = false;
 
@@ -1385,10 +1381,8 @@ MainWindow::main_display_update(VideoUpdate video_update)
 			// Resize Widget containing image
 			display->setFixedSize(video_update.host_xsize, video_update.host_ysize);
 
-#ifndef Q_OS_WASM
 			// Resize Window
 			this->setFixedSize(this->sizeHint());
-#endif /* !Q_OS_WASM */
 		}
 	}
 
