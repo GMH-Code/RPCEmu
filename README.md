@@ -93,7 +93,6 @@ These are problems which are specific to RISC OS 5, but *not* RISC OS 3.7.  They
 - Clicking the CD-ROM drive results in `CD-ROM drive not found` even if an ISO file is selected.
 - IDE discs (native hard disks) are untested, however these are unnecessary if the HostFS filesystem is used.
 - Only the instruction interpreter is supported, not the recompiler.  However, should a suitable *ARM-to-WASM* recompiler ever be built, it should be extremely fast!
-- Only ADF-format floppy disk images are supported at present.
 
 Building from Source -- Desktop
 -------------------------------

@@ -714,14 +714,23 @@ MainWindow::load_disc(int drive)
 					filename_local = "/home/web_user/cdrom.iso";
 					break;
 				case DEV_FLOPPY_1:
-					filename_local = "/home/web_user/floppy1.adf";
+					filename_local = "/home/web_user/floppy1";
 					break;
 				case DEV_FLOPPY_0:
-					filename_local = "/home/web_user/floppy0.adf";
+					filename_local = "/home/web_user/floppy0";
 					break;
 				default:
 					filename_local = "/hostfs/" + filename;
 					break;
+			}
+
+			// Add file extension if necessary
+			if ((drive == DEV_FLOPPY_1) or (drive == DEV_FLOPPY_0)) {
+				QFileInfo fileInfo(filename);
+				QString extension = fileInfo.suffix();
+
+				if (!extension.isEmpty())
+					filename_local += "." + extension;
 			}
 
 			// Write the file into MEMFS (allowing overwrites)
