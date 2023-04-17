@@ -1530,9 +1530,16 @@ MainWindow::mips_timer_timeout()
 void
 MainWindow::error(QString error)
 {
-#ifndef Q_OS_WASM
+#ifdef Q_OS_WASM
+	QMessageBox* msgBox = new QMessageBox();
+	msgBox->setWindowTitle("RPCEmu Error");
+	msgBox->setText(error);
+	msgBox->setStandardButtons(QMessageBox::Ok);
+	msgBox->setWindowModality(Qt::NonModal);
+	msgBox->show();
+#else
 	QMessageBox::warning(this, "RPCEmu Error", error);
-#endif /* !Q_OS_WASM */
+#endif /* Q_OS_WASM */
 }
 
 /**
