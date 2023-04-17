@@ -1,0 +1,3 @@
+Set Choices$Dir <Obey$Dir>.Choices
+Set Choices$Write <Choices$Dir>
+Set Choices$Path <Choices$Dir>.

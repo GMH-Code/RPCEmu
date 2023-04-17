@@ -1,0 +1,4 @@
+Application settings are stored in this folder.
+
+Without a 'Choices' folder present, programs like
+!Alarm will not function properly.
