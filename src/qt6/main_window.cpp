@@ -514,6 +514,12 @@ MainWindow::closeEvent(QCloseEvent *event)
 	// Pass on the close message for the main window, this
 	// will cause the program to quit
 	event->accept();
+
+#ifdef Q_OS_WASM
+	// This is necessary for WASM as Qt does not quit even if the main
+	// application window is closed.  Exiting with code 0 also does not quit.
+	exit(2);
+#endif
 }
 
 void
