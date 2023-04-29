@@ -15,7 +15,7 @@ You can try RPCEmu in your browser [here](https://gmh-code.github.io/rpcemu/).  
 
 - The original mouse had three buttons.  Pressing the mouse wheel should act as the middle (menu) button.
 - You can safely deny any webcam/microphone prompt(s).  This appears to be a standard for Qt when using multimedia.
-- Your work is not saved if you leave the page.
+- By default, your work is not saved if you leave the page.
 
 Screenshot
 ----------
@@ -61,6 +61,7 @@ Features Unique to this Version
 - You can upload individual files to HostFS in the same way you load disk images.  This offers a quick way to load modules or upload simple files.
 - You can 'upload' ADF floppy disk and ISO CD-ROM images to the emulator as it runs.
 - The screenshot feature can 'download' the screenshot to your local storage.
+- You can attach HostFS to the browser's IndexedDB instead of just using the in-memory filesystem, which offers a limited way to keep data between sessions.  At present, the CMOS, config, or IDE disc images are not included.
 
 Boot Sequence
 -------------

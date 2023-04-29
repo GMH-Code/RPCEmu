@@ -131,6 +131,10 @@ private slots:
 #endif // win32
 #ifdef Q_OS_WASM
 	void menu_hostfs_upload();
+	void menu_hostfs_update_menu(bool mounted);
+	void menu_hostfs_mount();
+	void menu_hostfs_unmount();
+	void menu_hostfs_sync();
 #endif /* Q_OS_WASM */
 	void menu_configure();
 #ifdef RPCEMU_NETWORKING
@@ -221,6 +225,9 @@ private:
 	QAction *cdrom_iso_action;
 #ifdef Q_OS_WASM
 	QAction *hostfs_upload_action;
+	QAction *hostfs_mount_action;
+	QAction *hostfs_unmount_action;
+	QAction *hostfs_sync_action;
 #endif /* Q_OS_WASM */
 
 	// Actions on Settings menu (and submenus)
