@@ -113,7 +113,9 @@ PortForwardRule port_forward_rules[MAX_PORT_FORWARDS]; ///< Port forward rules a
 int drawscre = 0;
 int quited = 0;
 
+#ifndef __EMSCRIPTEN__
 static FILE *arclog; /* Log file handle */
+#endif
 
 static int cycles;
 
@@ -167,6 +169,11 @@ rpclog(const char *format, ...)
 
 	assert(format);
 
+#ifdef __EMSCRIPTEN__
+	va_start(arg_list, format);
+	vfprintf(stdout, format, arg_list);
+	va_end(arg_list);
+#else
 	if (arclog == NULL) {
 		arclog = fopen(rpcemu_get_log_path(), "wt");
 		if (arclog == NULL) {
@@ -179,6 +186,7 @@ rpclog(const char *format, ...)
 	va_end(arg_list);
 
 	fflush(arclog);
+#endif
 }
 
 /**
