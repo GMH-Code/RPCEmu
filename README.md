@@ -58,7 +58,7 @@ Features Unique to this Version
 
 - RPCEmu-WASM runs entirely in WebAssembly, but the build process can still construct native apps in Linux and Windows.
 - The Qt version has been upgraded from the version 5 range to 6.5.
-- You can upload individual files to HostFS in the same way you load disk images.  This offers a quick way to load modules or upload simple files.
+- You can transfer files to and from HostFS.  This offers a quick way to load modules, upload archives, and export files.
 - You can 'upload' ADF floppy disk and ISO CD-ROM images to the emulator as it runs.
 - The screenshot feature can 'download' the screenshot to your local storage.
 - You can attach HostFS to the browser's IndexedDB instead of just using the in-memory filesystem, which offers a limited way to keep data between sessions.  At present, the CMOS, config, or IDE disc images are not included.

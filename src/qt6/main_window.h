@@ -131,6 +131,8 @@ private slots:
 #endif // win32
 #ifdef Q_OS_WASM
 	void menu_hostfs_upload();
+	void menu_hostfs_download();
+	void menu_hostfs_download_file_selected(const QString &file_path);
 	void menu_hostfs_update_menu(bool mounted);
 	void menu_hostfs_mount();
 	void menu_hostfs_unmount();
@@ -225,6 +227,7 @@ private:
 	QAction *cdrom_iso_action;
 #ifdef Q_OS_WASM
 	QAction *hostfs_upload_action;
+	QAction *hostfs_download_action;
 	QAction *hostfs_mount_action;
 	QAction *hostfs_unmount_action;
 	QAction *hostfs_sync_action;

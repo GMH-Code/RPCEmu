@@ -804,6 +804,35 @@ MainWindow::menu_hostfs_upload()
 }
 
 void
+MainWindow::menu_hostfs_download()
+{
+	// Select file from Emscripten's internal file system
+	QFileDialog* export_dialog = new QFileDialog(this, "Export File", "/hostfs");
+	export_dialog->setFileMode(QFileDialog::ExistingFile);
+	connect(export_dialog, &QFileDialog::fileSelected, this, &MainWindow::menu_hostfs_download_file_selected);
+	export_dialog->show();
+}
+
+void
+MainWindow::menu_hostfs_download_file_selected(const QString &file_path)
+{
+	if (!file_path.startsWith("/hostfs/"))
+		return;
+
+	QFile download_file(file_path);
+
+	if (!download_file.open(QIODevice::ReadOnly))
+		return;
+
+	QByteArray download_data = download_file.readAll();
+	download_file.close();
+	QFileInfo fileInfo(file_path);
+
+	// Export selected file from Emscripten's internal file system
+	QFileDialog::saveFileContent(download_data, fileInfo.fileName());
+}
+
+void
 MainWindow::menu_hostfs_update_menu(bool mounted)
 {
 	hostfs_mount_action->setEnabled(!mounted);
@@ -1283,6 +1312,8 @@ MainWindow::create_actions()
 #ifdef Q_OS_WASM
 	hostfs_upload_action = new QAction(tr("Upload to HostFS..."), this);
 	connect(hostfs_upload_action, &QAction::triggered, this, &MainWindow::menu_hostfs_upload);
+	hostfs_download_action = new QAction(tr("Download from HostFS..."), this);
+	connect(hostfs_download_action, &QAction::triggered, this, &MainWindow::menu_hostfs_download);
 	hostfs_mount_action = new QAction(tr("Mount HostFS from Browser DB"), this);
 	connect(hostfs_mount_action, &QAction::triggered, this, &MainWindow::menu_hostfs_mount);
 	hostfs_unmount_action = new QAction(tr("Unmount HostFS from Browser DB"), this);
@@ -1355,6 +1386,7 @@ MainWindow::create_menus()
 #ifdef Q_OS_WASM
 	disc_menu->addSeparator();
 	disc_menu->addAction(hostfs_upload_action);
+	disc_menu->addAction(hostfs_download_action);
 	disc_menu->addSeparator();
 	disc_menu->addAction(hostfs_mount_action);
 	disc_menu->addAction(hostfs_unmount_action);
