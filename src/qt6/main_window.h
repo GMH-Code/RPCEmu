@@ -90,6 +90,11 @@ private:
 	int host_xsize, host_ysize;
 	int scaled_x, scaled_y;
 	int offset_x, offset_y;
+
+#ifdef Q_OS_WASM
+	QPointF last_mouse_move_event_pos;
+	bool mouse_move_sync_pos;
+#endif /* Q_OS_WASM */
 };
 
 

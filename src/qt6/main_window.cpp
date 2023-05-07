@@ -60,6 +60,10 @@ MainDisplay::MainDisplay(Emulator &emulator, QWidget *parent)
 
 	image = new QImage(640, 480, QImage::Format_RGB32);
 
+#ifdef Q_OS_WASM
+	mouse_move_sync_pos = true;
+#endif /* Q_OS_WASM */
+
 	// No need to erase to background colour before painting
 	this->setAttribute(Qt::WA_OpaquePaintEvent);
 
@@ -75,6 +79,20 @@ void
 MainDisplay::mouseMoveEvent(QMouseEvent *event)
 {
 	if((!pconfig_copy->mousehackon && mouse_captured) || full_screen) {
+#ifdef Q_OS_WASM
+		// Assume the guest pointer is in the centre and try to sync with the host
+		if (mouse_move_sync_pos) {
+			last_mouse_move_event_pos.setX(this->width() / 2);
+			last_mouse_move_event_pos.setY(this->height() / 2);
+			mouse_move_sync_pos = false;
+		}
+
+		// We are not in mouse hack mode, so move the pointer using relative co-ordinates
+		QPointF event_pos = event->position();
+		int dx = event_pos.x() - last_mouse_move_event_pos.x();
+		int dy = event_pos.y() - last_mouse_move_event_pos.y();
+		last_mouse_move_event_pos = event_pos;
+#else
 		QPoint middle;
 
 		// In mouse capture mode move the mouse back to the middle of the window */ 
@@ -87,6 +105,7 @@ MainDisplay::mouseMoveEvent(QMouseEvent *event)
 		QPointF event_pos = event->position();
 		int dx = event_pos.x() - middle.x();
 		int dy = event_pos.y() - middle.y();
+#endif /* Q_OS_WASM */
 
 		emit this->emulator.mouse_move_relative_signal(dx, dy);
 	} else if(pconfig_copy->mousehackon) {
@@ -1191,7 +1210,6 @@ MainWindow::menu_cdrom_win_ioctl()
 void
 MainWindow::menu_mouse_hack()
 {
-#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
 	emit this->emulator.mouse_hack_signal();
 	config_copy.mousehackon ^= 1;
 
@@ -1206,7 +1224,6 @@ MainWindow::menu_mouse_hack()
 		// Show pointer in mouse capture mode when it's not been captured
 		this->display->setCursor(Qt::ArrowCursor);
 	}
-#endif /* !Q_OS_WASM */
 }
 
 void
@@ -1448,7 +1465,6 @@ MainWindow::create_menus()
 	menuBar()->addMenu(tr("|"));
 	perf_menu = menuBar()->addMenu(tr("RPCEmu"));
 	fullscreen_action->setEnabled(false);
-	mouse_hack_action->setEnabled(false);
 #endif /* Q_OS_WASM */
 
 	// Add handlers to track menu show/hide events
@@ -1612,6 +1628,9 @@ MainWindow::mips_timer_timeout()
 	// Calculate Average
 	const double average = (double) mips_total_instructions / ((double) mips_seconds * 1000000.0);
 
+#ifdef Q_OS_WASM
+	capture_text = "";
+#else
 	if(!pconfig_copy->mousehackon) {
 		if(mouse_captured) {
 			capture_text = " Press CTRL-END to release mouse";
@@ -1621,6 +1640,7 @@ MainWindow::mips_timer_timeout()
 	} else {
 		capture_text = "";
 	}
+#endif /* Q_OS_WASM */
 
 #if 1
 	// Update window title
