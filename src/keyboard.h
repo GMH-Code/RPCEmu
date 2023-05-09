@@ -49,6 +49,7 @@ extern void mouse_mouse_move(int x, int y);
 extern void mouse_mouse_move_relative(int dx, int dy);
 extern void mouse_mouse_press(int buttons);
 extern void mouse_mouse_release(int buttons);
+extern void mouse_mouse_wheel(int steps);
 
 extern void mouse_hack_osword_21_0(uint32_t a);
 extern void mouse_hack_osword_21_1(uint32_t a);

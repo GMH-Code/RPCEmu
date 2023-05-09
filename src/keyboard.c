@@ -80,6 +80,7 @@
 
 int kcallback = 0;
 int mcallback = 0;
+int mouse_z = 0;
 
 typedef struct {
 	uint8_t	data[PS2_QUEUE_SIZE];
@@ -675,9 +676,7 @@ static void
 mouse_process(void)
 {
 	static uint8_t oldmouseb = 0;
-	static int oldz = 0;
-	int x, y;
-	int z, tmpz;
+	int x, y, z;
 	uint8_t mouseb = mouse.buttons & 7;
 	uint8_t b;
 
@@ -688,9 +687,8 @@ mouse_process(void)
 	y = mouse.dy;
 
 	/* Get the absolute value of the scroll wheel position */
-//	z = mouse_z; /* Allegro */
-	z = 0; /* HACK */
-
+	z = mouse_z;
+	mouse_z = 0;
 
 	/* Update quadrature mouse */
 	iomd.mousex += x;
@@ -708,7 +706,7 @@ mouse_process(void)
 
 	/* Has anything changed from previous poll? */
 	if (x == 0 && y == 0 && (mouseb == oldmouseb) &&
-	    (mouse_type == 0 || (mouse_type != 0 && z == oldz)))
+		(mouse_type == 0 || (mouse_type != 0 && z == 0)))
 	{
 		return;
 	}
@@ -724,11 +722,6 @@ mouse_process(void)
 
         y^=0xFFFFFFFF;
         y++;
-
-	/* Calculate relative scrollwheel position from last call */
-	tmpz = oldz - z;
-	oldz = z;
-	z = tmpz;
 
 	/* Send PS/2 button/movement packet */
 	{
@@ -845,6 +838,20 @@ mouse_mouse_release(int buttons)
 
 	// Capture mode
 	if(!mousehack) {
+		mouse_process();
+	}
+}
+
+/**
+ *
+ *
+ * @param steps Mouse wheel step delta
+ */
+void
+mouse_mouse_wheel(int steps)
+{
+	if (!mousehack && ((mouse_type == 3) || (mouse_type == 4))) {
+		mouse_z = -steps;
 		mouse_process();
 	}
 }

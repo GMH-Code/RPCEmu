@@ -62,6 +62,7 @@ Features Unique to this Version
 - You can 'upload' ADF floppy disk and ISO CD-ROM images to the emulator as it runs.
 - The screenshot feature can 'download' the screenshot to your local storage.
 - You can attach HostFS to the browser's IndexedDB instead of just using the in-memory filesystem, which offers a limited way to keep data between sessions.  At present, the CMOS, config, or IDE disc images are not included.
+- Reintroduced mouse wheel support for PS/2-based systems.
 
 Boot Sequence
 -------------

@@ -520,6 +520,7 @@ Emulator::Emulator()
 	connect(this, &Emulator::mouse_move_relative_signal, this, &Emulator::mouse_move_relative);
 	connect(this, &Emulator::mouse_press_signal, this, &Emulator::mouse_press);
 	connect(this, &Emulator::mouse_release_signal, this, &Emulator::mouse_release);
+	connect(this, &Emulator::mouse_wheel_signal, this, &Emulator::mouse_wheel);
 
 	// Signals from user GUI interactions to control parts of the emulator
 	connect(this, &Emulator::reset_signal, this, &Emulator::reset);
@@ -730,6 +731,17 @@ void
 Emulator::mouse_release(int buttons)
 {
 	mouse_mouse_release(buttons);
+}
+
+/**
+ * Mouse wheel rotated
+ *
+ * @param step rotation delta
+ */
+void
+Emulator::mouse_wheel(int steps)
+{
+	mouse_mouse_wheel(steps);
 }
 
 /**

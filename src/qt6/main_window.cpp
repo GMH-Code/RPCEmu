@@ -145,6 +145,19 @@ MainDisplay::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void
+MainDisplay::wheelEvent(QWheelEvent *event)
+{
+	QPoint scroll_angle = event->angleDelta();
+
+	if (!scroll_angle.isNull()) {
+		const int scroll_angle_y = scroll_angle.y();
+		emit this->emulator.mouse_wheel_signal((scroll_angle_y > 0) ? 1 : ((scroll_angle_y < 0) ? -1 : 0));
+	}
+
+	event->accept();
+}
+
+void
 MainDisplay::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);

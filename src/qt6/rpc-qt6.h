@@ -56,6 +56,7 @@ signals:
 	void mouse_move_relative_signal(int dx, int dy);
 	void mouse_press_signal(int buttons);
 	void mouse_release_signal(int buttons);
+	void mouse_wheel_signal(int steps);
 
 	// GUI actions
 	void reset_signal();
@@ -90,6 +91,7 @@ public slots:
 	void mouse_move_relative(int dx, int dy);
 	void mouse_press(int buttons);
 	void mouse_release(int buttons);
+	void mouse_wheel(int steps);
 
 	// GUI actions
 	void reset();
