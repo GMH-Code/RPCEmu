@@ -313,7 +313,7 @@ loadhd(int d, const char *filename)
 {
 	char pathname[512];
 
-	snprintf(pathname, sizeof(pathname), "%s%s", rpcemu_get_datadir(), filename);
+	snprintf(pathname, sizeof(pathname), "%s%s", rpcemu_get_userdir(), filename);
 
 	if (ide.hdfile[d] == NULL) {
 		/* Try to open existing hard disk image */

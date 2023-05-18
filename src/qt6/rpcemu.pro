@@ -168,13 +168,18 @@ unix | wasm {
 }
 
 wasm {
+	SOURCES +=	container_window.cpp
+	HEADERS +=	container_window.h
+}
+
+wasm {
 	QMAKE_LFLAGS += -no-mimetype-database -lidbfs.js \
 			--preload-file ../../roms/riscos@/roms/riscos \
 			--preload-file ../../netroms@/netroms \
 			--preload-file ../../poduleroms@/poduleroms \
-			--preload-file ../../wasm/hostfs@/hostfs \
-			--preload-file ../../wasm/cmos.ram@/cmos.ram \
-			--preload-file ../../rpc.cfg@/rpc.cfg
+			--preload-file ../../wasm/hostfs@/init/hostfs \
+			--preload-file ../../wasm/cmos.ram@/init/user/cmos.ram \
+			--preload-file ../../rpc.cfg@/init/user/rpc.cfg
 }
 
 # Place exes in top level directory

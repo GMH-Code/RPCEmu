@@ -885,60 +885,7 @@ MainWindow::menu_hostfs_download_file_selected(const QString &file_path)
 }
 
 void
-MainWindow::menu_hostfs_update_menu(bool mounted)
-{
-	hostfs_mount_action->setEnabled(!mounted);
-	hostfs_unmount_action->setEnabled(mounted);
-	hostfs_sync_action->setEnabled(mounted);
-}
-
-void
-MainWindow::menu_hostfs_mount()
-{
-	EM_ASM(
-		console.info("Mounting HostFS...");
-		//FS.mkdir("/hostfs"); // Default HostFS folder already exists
-		FS.mount(IDBFS, {}, "/hostfs");
-		console.info("Mounted.  Now loading data...");
-		FS.syncfs(true, function (err) {
-			if (err) {
-				alert_msg = "Failed to load data: " + err;
-				console.warn(alert_msg);
-			} else {
-				alert_msg = "HostFS mounted and loaded from browser database.";
-				console.info(alert_msg);
-			}
-
-			window.alert(alert_msg);
-		});
-	);
-	menu_hostfs_update_menu(true);
-}
-
-void
-MainWindow::menu_hostfs_unmount()
-{
-	EM_ASM(
-		console.info("Saving data before unmount...");
-		FS.syncfs(function (err) {
-			if (err) {
-				alert_msg = "Cannot unmount.  Failed to save data: " + err;
-				console.warn(alert_msg);
-			} else {
-				console.info("Data saved.  Now unmounting HostFS...");
-				FS.unmount("/hostfs");
-				alert_msg = "HostFS saved and unmounted from browser database.";
-				console.info(alert_msg);
-			}
-
-			window.alert(alert_msg);
-		});
-	);
-	menu_hostfs_update_menu(false);
-}
-
-void
-MainWindow::menu_hostfs_sync()
+MainWindow::menu_user_data_sync()
 {
 	EM_ASM(
 		console.info("Saving data...");
@@ -946,9 +893,11 @@ MainWindow::menu_hostfs_sync()
 			if (err) {
 				alert_msg = "Failed to save data: " + err;
 				console.warn(alert_msg);
-				window.alert(alert_msg);
-			} else
-				console.info("Data saved.");
+			} else {
+				alert_msg = "Data saved.";
+				console.info(alert_msg);
+			}
+			window.alert(alert_msg);
 		});
 	);
 }
@@ -1370,13 +1319,8 @@ MainWindow::create_actions()
 	connect(hostfs_upload_action, &QAction::triggered, this, &MainWindow::menu_hostfs_upload);
 	hostfs_download_action = new QAction(tr("Download from HostFS..."), this);
 	connect(hostfs_download_action, &QAction::triggered, this, &MainWindow::menu_hostfs_download);
-	hostfs_mount_action = new QAction(tr("Mount HostFS from Browser DB"), this);
-	connect(hostfs_mount_action, &QAction::triggered, this, &MainWindow::menu_hostfs_mount);
-	hostfs_unmount_action = new QAction(tr("Unmount HostFS from Browser DB"), this);
-	connect(hostfs_unmount_action, &QAction::triggered, this, &MainWindow::menu_hostfs_unmount);
-	hostfs_sync_action = new QAction(tr("Sync HostFS -> Browser DB"), this);
-	connect(hostfs_sync_action, &QAction::triggered, this, &MainWindow::menu_hostfs_sync);
-	menu_hostfs_update_menu(false);
+	user_data_sync_action = new QAction(tr("Sync User Data -> Browser DB"), this);
+	connect(user_data_sync_action, &QAction::triggered, this, &MainWindow::menu_user_data_sync);
 #endif /* Q_OS_WASM */
 
 	// Actions on Settings menu
@@ -1444,10 +1388,7 @@ MainWindow::create_menus()
 	disc_menu->addAction(hostfs_upload_action);
 	disc_menu->addAction(hostfs_download_action);
 	disc_menu->addSeparator();
-	disc_menu->addAction(hostfs_mount_action);
-	disc_menu->addAction(hostfs_unmount_action);
-	disc_menu->addSeparator();
-	disc_menu->addAction(hostfs_sync_action);
+	disc_menu->addAction(user_data_sync_action);
 #endif /* Q_OS_WASM */
 
 	// Disc->Floppy menu

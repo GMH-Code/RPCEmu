@@ -187,6 +187,7 @@ extern uint32_t inscount;
    needed to be overridden, there is a generic version in rpc-machdep.c */
 extern const char *rpcemu_get_datadir(void);
 extern const char *rpcemu_get_log_path(void);
+extern const char *rpcemu_get_userdir(void);
 
 /* rpc-[linux|win].c */
 typedef struct {

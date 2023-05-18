@@ -36,6 +36,8 @@ extern QAtomicInt video_timer_count; ///< Video timer counter shared between Emu
 extern int mouse_captured;
 extern Config *pconfig_copy;
 
+void main_init();
+
 class Emulator : public QObject {
 	Q_OBJECT
 public:

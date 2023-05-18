@@ -30,6 +30,10 @@
 #include <QScreen>
 #include <QtCore>
 
+#ifdef Q_OS_WASM
+#include "container_window.h"
+#endif
+
 #include "main_window.h"
 #include "rpc-qt6.h"
 
@@ -64,6 +68,7 @@ extern void ioctl_init(void);
 
 static MainWindow *pMainWin = NULL; ///< Reference to main GUI window
 static QThread *gui_thread = NULL; ///< copy of reference to GUI thread
+static QThread *emu_thread = NULL; ///< Reference to emulator thread (nullptr)
 
 QAtomicInt instruction_count; ///< Instruction counter shared between Emulator and GUI threads
 QAtomicInt iomd_timer_count;  ///< IOMD timer  counter shared between Emulator and GUI threads
@@ -81,6 +86,10 @@ int mouse_captured = 0;		///< Have we captured the mouse in mouse capture mode
 Config *pconfig_copy = NULL;	///< Pointer to frontend copy of config
 
 static Emulator *emulator = NULL;
+
+#ifdef Q_OS_WASM
+static ContainerWindow *container_win = NULL;
+#endif /* Q_OS_WASM */
 
 /**
  * Function called in sound thread to block
@@ -434,7 +443,26 @@ int main (int argc, char ** argv)
 
 	// Add a program icon
 	QApplication::setWindowIcon(QIcon(":/rpcemu_icon.png"));
-	
+
+#ifdef Q_OS_WASM
+	container_win = new ContainerWindow(&main_init); // Delayed call of init
+	container_win->show();
+#else
+	main_init(); // Immediate call of init
+#endif /* Q_OS_WASM */
+
+	// Start main gui thread running
+	return app.exec();
+}
+
+/**
+ * Helper function for WebAssembly, which allows the Qt events to process and
+ * pauses the emulator's boot process until the filesystem is initialised.
+ *
+ * If we are running natively, then this is called immediately.
+ */
+void main_init()
+{
 	// start enough of the emulator system to allow
 	// the GUI to initialise (e.g. load the config to init
 	// the configure window)
@@ -448,7 +476,7 @@ int main (int argc, char ** argv)
 	qRegisterMetaType<PortForwardRule>("PortForwardRule");
 
 	// Create Emulator Thread and Object
-	QThread *emu_thread = new QThread;
+	emu_thread = new QThread;
 	emu_thread->setObjectName("rpcemu: emu");
 
 	emulator = new Emulator;
@@ -459,30 +487,18 @@ int main (int argc, char ** argv)
 	QThread::connect(emu_thread, &QThread::finished, emu_thread, &QThread::deleteLater);
 
 	// Create Main Window
-	MainWindow main_window(*emulator);
-	pMainWin = &main_window;
+	pMainWin = new MainWindow(*emulator);
 
 #ifdef Q_OS_WASM
 	// Place main window in container
-	QMainWindow *container_window = new QMainWindow;
-	QWidget *central_widget = new QTabWidget;
-	QBoxLayout *layout_widget = new QBoxLayout(QBoxLayout::LeftToRight, central_widget);
-	container_window->setWindowTitle("RPCEmu");
-	container_window->setCentralWidget(central_widget);
-	central_widget->setObjectName(QString("Bkg"));
-	central_widget->setStyleSheet("QWidget#Bkg {background-color: #222;}");
-	layout_widget->addWidget(pMainWin);
-	layout_widget->setAlignment(pMainWin, Qt::AlignCenter);
-	main_window.setFocusPolicy(Qt::StrongFocus);
+	pMainWin->setFocusPolicy(Qt::StrongFocus);
+	container_win->set_contained_window(pMainWin);
 
 	// Close the container when the emulator is shut down
-	container_window->connect(emulator, SIGNAL(destroyed()), container_window, SLOT(close()));
-
-	// Show the container
-	container_window->show();
+	container_win->connect(emulator, SIGNAL(destroyed()), container_win, SLOT(close()));
 #else
 	// Show Main Window
-	main_window.show();
+	pMainWin->show();
 #endif /* Q_OS_WASM */
 
 	// Store a reference to the GUI thread
@@ -495,9 +511,6 @@ int main (int argc, char ** argv)
 
 	// Start Emulator Thread
 	emu_thread->start();
-
-	// Start main gui thread running
-	return app.exec();
 }
 
 /**

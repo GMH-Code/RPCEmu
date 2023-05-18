@@ -95,7 +95,7 @@ void initics(void)
 /*        FILE *f;
         char fn[512];
 
-	snprintf(fn, sizeof(fn), "%szidefs", rpcemu_get_datadir());
+	snprintf(fn, sizeof(fn), "%szidefs", rpcemu_get_userdir());
         f=fopen(fn,"rb");
         if (!f)
         {

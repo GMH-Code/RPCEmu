@@ -28,6 +28,9 @@
 
 static char datadir[512] = "./";
 static char logpath[1024] = "";
+#ifdef __EMSCRIPTEN__
+static char userdir[512] = "./user/";
+#endif
 
 /**
  * Return the path of the data directory containing all the sub data parts
@@ -39,6 +42,16 @@ const char *
 rpcemu_get_datadir(void)
 {
 	return datadir;
+}
+
+const char *
+rpcemu_get_userdir(void)
+{
+#ifdef __EMSCRIPTEN__
+	return userdir;
+#else
+	return rpcemu_get_datadir();
+#endif
 }
 
 /**
