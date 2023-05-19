@@ -50,6 +50,13 @@
 #define DEV_CDROM    -1
 #define DEV_HOSTFS   -2
 
+#ifdef Q_OS_WASM
+#define WASM_HOME "/home/web_user/"
+#define TEMP_FLOPPY_0 WASM_HOME "floppy0"
+#define TEMP_FLOPPY_1 WASM_HOME "floppy1"
+#define TEMP_CD_ISO   WASM_HOME "cdrom.iso"
+#endif /* Q_OS_WASM */
+
 MainDisplay::MainDisplay(Emulator &emulator, QWidget *parent)
     : QWidget(parent),
       emulator(emulator),
@@ -753,14 +760,23 @@ MainWindow::load_disc(int drive)
 			// Allocate MEMFS filename
 			switch (drive) {
 				case DEV_CDROM:
-					filename_local = "/home/web_user/cdrom.iso";
+					filename_local = TEMP_CD_ISO;
 					break;
+
 				case DEV_FLOPPY_1:
-					filename_local = "/home/web_user/floppy1";
+					if (!old_temp_floppy_1.isEmpty())
+						QFile::remove(old_temp_floppy_1);
+
+					filename_local = TEMP_FLOPPY_1;
 					break;
+
 				case DEV_FLOPPY_0:
-					filename_local = "/home/web_user/floppy0";
+					if (!old_temp_floppy_0.isEmpty())
+						QFile::remove(old_temp_floppy_0);
+
+					filename_local = TEMP_FLOPPY_0;
 					break;
+
 				default:
 					filename_local = "/hostfs/" + filename;
 					break;
@@ -788,10 +804,14 @@ MainWindow::load_disc(int drive)
 					cdrom_menu_selection_update(cdrom_iso_action);
 					emit this->emulator.cdrom_load_iso_signal(filename_local);
 					break;
+
 				case DEV_FLOPPY_1:
+					old_temp_floppy_1 = filename_local;
 					emit this->emulator.load_disc_1_signal(filename_local);
 					break;
+
 				case DEV_FLOPPY_0:
+					old_temp_floppy_0 = filename_local;
 					emit this->emulator.load_disc_0_signal(filename_local);
 					break;
 			}
@@ -1080,6 +1100,9 @@ MainWindow::menu_cdrom_disabled()
 
 	/* we now have either no need to reboot or an agreement to reboot */
 
+#ifdef Q_OS_WASM
+	QFile::remove(TEMP_CD_ISO);
+#endif /* Q_OS_WASM */
 	emit this->emulator.cdrom_disabled_signal();
 	config_copy.cdromenabled = 0;
 
@@ -1107,6 +1130,9 @@ MainWindow::menu_cdrom_empty()
 
 	/* we now have either no need to reboot or an agreement to reboot */
 
+#ifdef Q_OS_WASM
+	QFile::remove(TEMP_CD_ISO);
+#endif /* Q_OS_WASM */
 	emit this->emulator.cdrom_empty_signal();
 	config_copy.cdromenabled = 1;
 

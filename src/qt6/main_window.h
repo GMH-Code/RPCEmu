@@ -202,6 +202,11 @@ private:
 
 	QString curFile;
 
+#ifdef Q_OS_WASM
+	QString old_temp_floppy_0;
+	QString old_temp_floppy_1;
+#endif /* Q_OS_WASM */
+
 	// Menus
 	QMenu *file_menu;
 	QMenu *disc_menu;
