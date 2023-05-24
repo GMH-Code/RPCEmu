@@ -14,7 +14,6 @@ Try It!
 You can try RPCEmu in your browser [here](https://gmh-code.github.io/rpcemu/).  Please note that:
 
 - The original mouse had three buttons.  Pressing the mouse wheel should act as the middle (menu) button.
-- You can safely deny any webcam/microphone prompt(s).  This appears to be a standard for Qt when using multimedia.
 - It is possible to manually sync your files, settings, and the guest CMOS with your browser's database, so long as you do this before you leave the page.
 
 Screenshot
@@ -67,14 +66,7 @@ Features Unique to this Version
 Boot Sequence
 -------------
 
-This emulator boots from ROM images like many others, but to save on download size, the standard !Boot sequence is *not* installed by default.
-
-To configure the system's CMOS to boot from a !Boot sequence placed on HostFS, press F12 to enter the CLI and run these commands:
-
-    configure filesystem hostfs
-    configure boot
-
-Press return to the `*` prompt to exit.  You will then need to shut down and restart the OS by clicking *File > Reset* in the emulator's menu bar.
+This emulator boots from ROM images like many others, but to save on download size, the standard !Boot sequence is *not* installed by default.  If you like, you can remove the default contents of HostFS, replace the !Boot sequence, and then sync your changes so the system starts in your preferred way the next time.
 
 ROM Support
 -----------
