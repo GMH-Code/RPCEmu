@@ -40,6 +40,7 @@ ContainerWindow::ContainerWindow(void (*main_init_callback)())
 	// Set up container for main window
 	QTabWidget *central_widget = new QTabWidget; // Regular QWidget flickers when undersized
 	main_layout_widget = new QBoxLayout(QBoxLayout::LeftToRight, central_widget);
+	main_layout_widget->setContentsMargins(0, 0, 0, 0);
 	start_label = new QLabel("RPCEmu-WASM is starting...");
 	start_label->setObjectName(QString("InitLbl"));
 	start_label->setStyleSheet("QLabel#InitLbl {color: white;}");

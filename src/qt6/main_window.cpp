@@ -442,7 +442,12 @@ MainWindow::MainWindow(Emulator &emulator)
 	
 	// App losing/gaining focus
 	connect(qApp, &QGuiApplication::applicationStateChanged, this, &MainWindow::application_state_changed);
-	
+
+#ifdef Q_OS_WASM
+	// App resize
+	connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::screen_resized);
+#endif /* Q_OS_WASM */
+
 	// Workaround for for qt bug https://bugreports.qt.io/browse/QTBUG-67239
 	// Prevents the menu code stealing the keyboard focus and preventing keys
 	// like escape from working, when opening more than one menu on the menubar
@@ -948,8 +953,12 @@ MainWindow::menu_nat_list()
 void
 MainWindow::menu_fullscreen()
 {
-#ifndef Q_OS_WASM // Skip compiling this if the target is WASM
 	if (!full_screen) {
+#ifdef Q_OS_WASM
+		EM_ASM(
+			window.alert("To leave full-screen mode, press Ctrl-End.");
+		);
+#else
 		// Change Windowed -> Full Screen
 
 		// Make sure people know how to exit full-screen
@@ -980,16 +989,20 @@ MainWindow::menu_fullscreen()
 				config_copy.show_fullscreen_message = 0;
 			}
 		}
+#endif /* Q_OS_WASM */
 
 		display->set_full_screen(true);
 
 		this->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 		display->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 		menuBar()->setVisible(false);
-		this->showFullScreen();
-
 		full_screen = true;
-		
+#ifdef Q_OS_WASM
+		screen_resized(qApp->primaryScreen()->geometry());
+#else
+		this->showFullScreen();
+#endif /* Q_OS_WASM */
+
 		// If in mousehack mode, change to a temporary mouse capture style
 		// during full screen
 		if(config_copy.mousehackon) {
@@ -1003,8 +1016,16 @@ MainWindow::menu_fullscreen()
 
 	// Keep tick of menu item in sync
 	fullscreen_action->setChecked(false);
-#endif /* !Q_OS_WASM */
 }
+
+#ifdef Q_OS_WASM
+void
+MainWindow::screen_resized(const QRect &new_geometry)
+{
+	if (full_screen)
+		this->setFixedSize(new_geometry.width(), new_geometry.height());
+}
+#endif /* Q_OS_WASM */
 
 void
 MainWindow::menu_cpu_idle()
@@ -1444,7 +1465,6 @@ MainWindow::create_menus()
 #ifdef Q_OS_WASM
 	menuBar()->addMenu(tr("|"));
 	perf_menu = menuBar()->addMenu(tr("RPCEmu"));
-	fullscreen_action->setEnabled(false);
 #endif /* Q_OS_WASM */
 
 	// Add handlers to track menu show/hide events

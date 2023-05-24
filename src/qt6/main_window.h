@@ -166,6 +166,9 @@ private slots:
 	void mips_timer_timeout();
 
 	void application_state_changed(Qt::ApplicationState state);
+#ifdef Q_OS_WASM
+	void screen_resized(const QRect &newGeometry);
+#endif /* Q_OS_WASM */
 signals:
 	void main_display_signal(VideoUpdate video_update);
 	void move_host_mouse_signal(MouseMoveUpdate mouse_update);
