@@ -69,6 +69,9 @@ AudioOut::AudioOut(uint32_t bufferlen)
 		rpclog("%d: %d\n", i, samprates.at(i));
 	}
 	*/
+
+	// Start the audio device for the first time to work around timing issues
+	this->changeSampleRate(41666);
 }
 
 AudioOut::~AudioOut()
@@ -84,6 +87,8 @@ AudioOut::~AudioOut()
 void
 AudioOut::changeSampleRate(uint32_t samplerate)
 {
+	rpclog("plt_sound: changing to samplerate %uHz\n", samplerate);
+
 	QAudioDevice device = QMediaDevices::defaultAudioOutput();
 	QAudioFormat format = device.preferredFormat(); /**< Qt output representing a kind of audio format */
 
@@ -207,7 +212,6 @@ plt_sound_buffer_play(uint32_t samplerate, const char *buffer, uint32_t length)
 	assert(length > 0);
 
 	if(samplerate != audio_out->samplerate) {
-		rpclog("plt_sound: changing to samplerate %uHz\n", samplerate);
 		audio_out->changeSampleRate(samplerate);
 	}
 
