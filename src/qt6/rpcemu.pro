@@ -173,6 +173,8 @@ wasm {
 }
 
 wasm {
+	QT_WASM_PTHREAD_POOL_SIZE = 3
+
 	QMAKE_LFLAGS += -no-mimetype-database -lidbfs.js \
 			--preload-file ../../roms/riscos@/roms/riscos \
 			--preload-file ../../netroms@/netroms \
