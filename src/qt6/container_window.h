@@ -21,7 +21,7 @@
 #define CONTAINER_WINDOW_H
 
 #include <QMainWindow>
-#include <QBoxLayout>
+#include <QScrollArea>
 #include <QLabel>
 
 class ContainerWindow : public QMainWindow
@@ -37,7 +37,7 @@ private slots:
 	void init_timer_timeout();
 
 private:
-	QBoxLayout *main_layout_widget;
+	QScrollArea *main_scroll_area;
 	QLabel *start_label;
 	QTimer *load_timer;
 	QTimer *init_timer;

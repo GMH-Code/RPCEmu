@@ -38,17 +38,17 @@ ContainerWindow::ContainerWindow(void (*main_init_callback)())
 	setWindowTitle("RPCEmu");
 
 	// Set up container for main window
-	QTabWidget *central_widget = new QTabWidget; // Regular QWidget flickers when undersized
-	main_layout_widget = new QBoxLayout(QBoxLayout::LeftToRight, central_widget);
-	main_layout_widget->setContentsMargins(0, 0, 0, 0);
+	main_scroll_area = new QScrollArea(this);
 	start_label = new QLabel("RPCEmu-WASM is starting...");
 	start_label->setObjectName(QString("InitLbl"));
-	start_label->setStyleSheet("QLabel#InitLbl {color: white;}");
-	main_layout_widget->addWidget(start_label);
-	main_layout_widget->setAlignment(start_label, Qt::AlignCenter);
-	central_widget->setObjectName(QString("Bkg"));
-	central_widget->setStyleSheet("QWidget#Bkg {background-color: #222;}");
-	setCentralWidget(central_widget);
+	start_label->setStyleSheet("QLabel#InitLbl {background-color: #222; color: white;}");
+	main_scroll_area->setAlignment(Qt::AlignCenter);
+	main_scroll_area->setObjectName(QString("Bkg"));
+	main_scroll_area->setStyleSheet("QWidget#Bkg {background-color: #222; border: 0;}");
+	main_scroll_area->setWidget(start_label);
+	main_scroll_area->setFocusPolicy(Qt::NoFocus);
+	setCentralWidget(main_scroll_area);
+	setFocusPolicy(Qt::NoFocus);
 	setCursor(Qt::WaitCursor);
 
 	// Initialise the filesystem when there are no more Qt events
@@ -68,9 +68,8 @@ ContainerWindow::ContainerWindow(void (*main_init_callback)())
 void
 ContainerWindow::set_contained_window(QMainWindow *main_window)
 {
-	start_label->hide();
-	main_layout_widget->addWidget(main_window);
-	main_layout_widget->setAlignment(main_window, Qt::AlignCenter);
+	delete start_label;
+	main_scroll_area->setWidget(main_window);
 }
 
 /**
