@@ -122,7 +122,7 @@ ContainerWindow::init_timer_timeout()
 		return;
 
 	init_timer->stop();
-
+	started_dir.removeRecursively();
 	rpclog("Load complete.  Checking for presence of user data...\n");
 	QFile test_file("/user/cmos.ram");
 
@@ -133,6 +133,8 @@ ContainerWindow::init_timer_timeout()
 		copy_folder("/init", "/");
 	}
 
+	QDir init_dir("/init");
+	init_dir.removeRecursively();
 	setCursor(Qt::ArrowCursor);
 	main_init_callback();
 }
