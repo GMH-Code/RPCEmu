@@ -73,8 +73,10 @@ NatListDialog::NatListDialog(Emulator &emulator, QWidget *parent)
 
 	connect(this, &QDialog::rejected, this, &NatListDialog::dialog_rejected);
 
+#ifndef Q_OS_WASM
 	// Fix width on Dialog
 	this->setFixedWidth(this->sizeHint().width());
+#endif /* !Q_OS_WASM */
 }
 
 
