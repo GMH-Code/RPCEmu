@@ -1704,9 +1704,13 @@ MainWindow::error(QString error)
 void
 MainWindow::fatal(QString error)
 {
-#ifndef Q_OS_WASM
+#ifdef Q_OS_WASM
+	EM_ASM({
+		window.alert("RPCEmu fatal error: " + UTF8ToString($0));
+	}, error.toUtf8().constData());
+#else
 	QMessageBox::critical(this, "RPCEmu Fatal Error", error);
-#endif /* !Q_OS_WASM */
+#endif /* Q_OS_WASM */
 
 	exit(EXIT_FAILURE);
 }
