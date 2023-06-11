@@ -90,10 +90,10 @@ ContainerWindow::load_timer_timeout()
 		console.info("Mounted.  Now loading data...");
 		FS.syncfs(true, function (err) {
 			if (err) {
-				alert_msg = "Failed to load data: " + err;
+				const alert_msg = "Failed to load data: " + err;
 				console.warn(alert_msg);
 			} else {
-				alert_msg = "Data folders mounted and loaded from browser database.";
+				const alert_msg = "Data folders mounted and loaded from browser database.";
 				console.info(alert_msg);
 			}
 

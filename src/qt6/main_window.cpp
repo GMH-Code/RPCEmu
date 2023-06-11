@@ -896,6 +896,8 @@ MainWindow::menu_user_data_sync()
 	EM_ASM(
 		console.info("Saving data...");
 		FS.syncfs(function (err) {
+			let alert_msg;
+
 			if (err) {
 				alert_msg = "Failed to save data: " + err;
 				console.warn(alert_msg);
@@ -903,6 +905,7 @@ MainWindow::menu_user_data_sync()
 				alert_msg = "Data saved.";
 				console.info(alert_msg);
 			}
+
 			window.alert(alert_msg);
 		});
 	);
