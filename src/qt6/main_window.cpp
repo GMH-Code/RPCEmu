@@ -49,12 +49,17 @@
 #define DEV_FLOPPY_0  0
 #define DEV_CDROM    -1
 #define DEV_HOSTFS   -2
+#define DEV_ROM      -3
 
 #ifdef Q_OS_WASM
 #define WASM_HOME "/home/web_user/"
 #define TEMP_FLOPPY_0 WASM_HOME "floppy0"
 #define TEMP_FLOPPY_1 WASM_HOME "floppy1"
 #define TEMP_CD_ISO   WASM_HOME "cdrom.iso"
+#define MSG_ROM_READY "<p><strong>RPCEmu needs to be restarted.</strong></p>" \
+                      "<p>When ready:</p>" \
+                      "<ol><li>Save your changes using Disc > Sync.</li>" \
+                      "<li>Reload the page.</li></ol>"
 #endif /* Q_OS_WASM */
 
 MainDisplay::MainDisplay(Emulator &emulator, QWidget *parent)
@@ -737,6 +742,22 @@ MainWindow::menu_screenshot()
 #endif /* Q_OS_WASM */
 }
 
+#ifdef Q_OS_WASM
+void
+MainWindow::menu_rom_upload()
+{
+	load_disc(DEV_ROM);
+}
+
+void
+MainWindow::menu_rom_default()
+{
+	QFile::remove("/user/riscos");
+	rom_default_action->setEnabled(false);
+	msgbox_nonmodal("Default ROM", MSG_ROM_READY);
+}
+#endif /* Q_OS_WASM */
+
 void
 MainWindow::menu_reset()
 {
@@ -765,6 +786,27 @@ MainWindow::load_disc(int drive)
 
 			// Allocate MEMFS filename
 			switch (drive) {
+				case DEV_ROM: {
+					int rom_size = file_content.size();
+
+					if (
+						rom_size != (2*1024*1024) && rom_size != (4*1024*1024) && rom_size != (6*1024*1024) &&
+						rom_size != (8*1024*1024)
+					) {
+						msgbox_nonmodal(
+							"Incorrect Size",
+							"ROM must be exactly 2MiB, 4MiB, 6MiB or 8MiB.  Size: " +
+								QString::number(rom_size) + " bytes"
+						);
+						return;
+					}
+
+					msgbox_nonmodal("New ROM Uploaded", MSG_ROM_READY);
+					rom_default_action->setEnabled(true);
+					filename_local = "/user/riscos";
+					break;
+				}
+
 				case DEV_CDROM:
 					filename_local = TEMP_CD_ISO;
 					break;
@@ -1292,6 +1334,13 @@ MainWindow::create_actions()
 	// Actions on File menu
 	screenshot_action = new QAction(tr("Take Screenshot..."), this);
 	connect(screenshot_action, &QAction::triggered, this, &MainWindow::menu_screenshot);
+#ifdef Q_OS_WASM
+	rom_upload_action = new QAction(tr("Replace ROM Image..."), this);
+	connect(rom_upload_action, &QAction::triggered, this, &MainWindow::menu_rom_upload);
+	rom_default_action = new QAction(tr("Use Default ROM"), this);
+	connect(rom_default_action, &QAction::triggered, this, &MainWindow::menu_rom_default);
+	rom_default_action->setEnabled(QFile::exists("/user/riscos"));
+#endif /* Q_OS_WASM */
 	reset_action = new QAction(tr("Reset"), this);
 	connect(reset_action, &QAction::triggered, this, &MainWindow::menu_reset);
 	exit_action = new QAction(tr("Exit"), this);
@@ -1400,6 +1449,11 @@ MainWindow::create_menus()
 	file_menu = menuBar()->addMenu(tr("File"));
 	file_menu->addAction(screenshot_action);
 	file_menu->addSeparator();
+#ifdef Q_OS_WASM
+	file_menu->addAction(rom_upload_action);
+	file_menu->addAction(rom_default_action);
+	file_menu->addSeparator();
+#endif /* Q_OS_WASM */
 	file_menu->addAction(reset_action);
 	file_menu->addSeparator();
 	file_menu->addAction(exit_action);
@@ -1677,6 +1731,23 @@ MainWindow::mips_timer_timeout()
 #endif /* Q_OS_WASM */
 }
 
+#ifdef Q_OS_WASM
+/**
+ * Show a modeless dialog in WebAssembly for information purposes only
+ *
+ * @param title dialog title string
+ * @param error dialog error string
+ */
+void
+MainWindow::msgbox_nonmodal(QString title, QString error)
+{
+	QMessageBox* msgBox = new QMessageBox(QMessageBox::Information, title, error, QMessageBox::Ok);
+	msgBox->setDefaultButton(QMessageBox::Ok);
+	msgBox->setWindowModality(Qt::NonModal);
+	msgBox->show();
+}
+#endif /* Q_OS_WASM */
+
 /**
  * Present a model dialog to the user about an error that has occured.
  * Wait for them to dismiss it
@@ -1687,12 +1758,7 @@ void
 MainWindow::error(QString error)
 {
 #ifdef Q_OS_WASM
-	QMessageBox* msgBox = new QMessageBox();
-	msgBox->setWindowTitle("RPCEmu Error");
-	msgBox->setText(error);
-	msgBox->setStandardButtons(QMessageBox::Ok);
-	msgBox->setWindowModality(Qt::NonModal);
-	msgBox->show();
+	msgbox_nonmodal("RPCEmu Error", error);
 #else
 	QMessageBox::warning(this, "RPCEmu Error", error);
 #endif /* Q_OS_WASM */

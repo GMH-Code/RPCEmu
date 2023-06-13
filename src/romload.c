@@ -209,6 +209,7 @@ void loadroms(void)
                 free(romfilenames[c]);
         }
 
+#ifndef __EMSCRIPTEN__
         /* Reject ROMs that are not sensible sizes
          * Allow 2MB (RISC OS 3.50)
          *       4MB (RISC OS 3.60 -> Half way through Select)
@@ -220,6 +221,7 @@ void loadroms(void)
         {
                 fatal("ROM Image of unsupported size: expecting 2MB, 4MB, 6MB or 8MB, got %d bytes", pos);
         }
+#endif
 
 	rpclog("romload: Total ROM size %d MB\n", pos / 1048576);
 

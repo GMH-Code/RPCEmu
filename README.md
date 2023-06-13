@@ -14,7 +14,7 @@ Try It!
 You can try RPCEmu in your browser [here](https://gmh-code.github.io/rpcemu/).  Please note that:
 
 - The original mouse had three buttons.  Pressing the mouse wheel should act as the middle (menu) button.
-- It is possible to manually sync your files, settings, and the guest CMOS with your browser's database, so long as you do this before you leave the page.
+- It is possible to manually sync your files, settings, the guest CMOS, and a custom ROM with your browser's database, so long as you do this before you leave the page.
 
 Screenshot
 ----------
@@ -60,7 +60,7 @@ Features Unique to this Version
 - You can transfer files to and from HostFS.  This offers a quick way to load modules, upload archives, and export files.
 - You can 'upload' ADF floppy disk and ISO CD-ROM images to the emulator as it runs.
 - The screenshot feature can 'download' the screenshot to your local storage.
-- HostFS, CMOS, RPCEmu configuration, and IDE disc images are attached to the browser's IndexedDB instead of just using the in-memory filesystem.  This offers a limited way to keep data between sessions, but for Emscripten performance reasons, you must manually sync to save changes.
+- HostFS, CMOS, RPCEmu configuration, IDE disc images, and a custom ROM can be attached to the browser's IndexedDB instead of just using the in-memory filesystem.  This offers a limited way to keep data between sessions, but for Emscripten performance reasons, you must manually sync to save changes.
 - Reintroduced mouse wheel support for PS/2-based systems.
 
 Boot Sequence

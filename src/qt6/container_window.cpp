@@ -133,6 +133,13 @@ ContainerWindow::init_timer_timeout()
 		copy_folder("/init", "/");
 	}
 
+	// If a user ROM exists, replace the pre-installed version
+	if (QFile::exists("/user/riscos")) {
+		rpclog("Applying user ROM...\n");
+		QFile::remove("/roms/riscos");
+		QFile::copy("/user/riscos", "/roms/riscos");
+	}
+
 	QDir init_dir("/init");
 	init_dir.removeRecursively();
 	setCursor(Qt::ArrowCursor);

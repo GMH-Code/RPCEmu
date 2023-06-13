@@ -123,6 +123,10 @@ protected:
 	
 private slots:
 	void menu_screenshot();
+#ifdef Q_OS_WASM
+	void menu_rom_upload();
+	void menu_rom_default();
+#endif /* Q_OS_WASM */
 	void menu_reset();
 	void menu_loaddisc0();
 	void menu_loaddisc1();
@@ -195,6 +199,10 @@ private:
 
 	void load_disc(int drive);
 
+#ifdef Q_OS_WASM
+	void msgbox_nonmodal(QString title, QString error);
+#endif /* Q_OS_WASM */
+
 	bool full_screen;
 	bool reenable_mousehack; ///< Did we disable mousehack entering fullscreen and have to reenable it on leaving fullscreen?
 
@@ -221,6 +229,10 @@ private:
 
 	// Actions on File menu
 	QAction *screenshot_action;
+#ifdef Q_OS_WASM
+	QAction *rom_upload_action;
+	QAction *rom_default_action;
+#endif /* Q_OS_WASM */
 	QAction *reset_action;
 	QAction *exit_action;
 
