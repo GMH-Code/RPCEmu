@@ -474,6 +474,7 @@ int
 MainWindow::reset_question(QWidget *parent)
 {
 #ifdef Q_OS_WASM
+	(void)*parent; // Workaround for unused variable compiler warning in WASM
 	return QMessageBox::Ok;
 #else
 	QMessageBox msgBox(parent);
