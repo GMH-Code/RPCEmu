@@ -637,9 +637,6 @@ Emulator::idle_process_events()
 {
 	const int32_t iomd_timer_interval = 2000000; // 2000000 ns = 2 ms (500 Hz)
 
-	// Handle qt events and messages
-	QCoreApplication::processEvents();
-
 	const qint64 elapsed = elapsed_timer.nsecsElapsed();
 
 	// If we have passed the time the IOMD timer event should occur, trigger it
